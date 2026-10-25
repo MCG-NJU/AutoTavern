@@ -1,0 +1,34 @@
+[build-system]
+requires = ["maturin>=1.15,<2"]
+build-backend = "maturin"
+
+[project]
+name = "taverngym"
+version = "1.0.0"
+description = "TavernGym: a Hearthstone Battlegrounds solo-mode simulator with a reinforcement-learning interface"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+dependencies = ["numpy"]
+
+[project.optional-dependencies]
+test = ["pytest"]
+# TavernBench model runners (scoring needs none of these)
+bench = ["openai>=1.0", "httpx", "requests"]
+
+[project.urls]
+Repository = "https://github.com/MCG-NJU/AutoTavern"
+
+[tool.maturin]
+manifest-path = "crates/taverngym-py/Cargo.toml"
+python-source = "python"
+module-name = "taverngym._core"
+features = ["pyo3/extension-module"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["python"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"

@@ -1,0 +1,26 @@
+AutoTavern: TavernGym and TavernBench
+Copyright (c) 2026 The AutoTavern Authors
+
+This repository (source code, documentation and the TavernBench tasks, labels, states and
+results) is licensed under the MIT License; see LICENSE. The license does not cover the
+third-party game content described below.
+
+DISCLAIMER
+
+Hearthstone, Hearthstone Battlegrounds and Blizzard Entertainment are trademarks or registered
+trademarks of Blizzard Entertainment, Inc. in the U.S. and other countries. This project is an
+independent, non-commercial research project. It is not affiliated with, endorsed, sponsored or
+approved by Blizzard Entertainment, and it is not an official Blizzard product.
+
+Card names, card texts, card statistics, hero and game-mechanic names and other game data, as
+they appear in crates/taverngym/data/cards.json, tools/overlays/, docs/ and the TavernBench files,
+are the property of Blizzard Entertainment. They are included only as needed to simulate the
+game's rules for research on artificial intelligence. No game client files, art, audio or other
+assets are distributed. TavernGym is not a game client and does not connect to Blizzard's
+services.
+
+All rights in the game content remain with Blizzard Entertainment. If you are a rights holder
+and object to any content in this repository, please open an issue and it will be addressed
+promptly.
+
+The software is provided "as is", without warranty of any kind (see LICENSE).

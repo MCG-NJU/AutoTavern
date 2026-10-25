@@ -1,0 +1,18 @@
+[workspace]
+resolver = "2"
+members = ["crates/taverngym", "crates/taverngym-py"]
+
+[workspace.package]
+version = "1.0.0"
+edition = "2024"
+rust-version = "1.98"
+license = "MIT"
+repository = "https://github.com/MCG-NJU/AutoTavern"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+debug = "line-tables-only"  # keep backtraces/profiling usable
+
+[profile.dev.package."*"]
+opt-level = 2  # fast dependencies even in debug builds

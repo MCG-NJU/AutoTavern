@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use TavernGym or TavernBench, please cite the paper."
+title: "AutoTavern: TavernGym and TavernBench"
+authors:
+  - family-names: Ma
+    given-names: Changlian
+    affiliation: "Nanjing University; Shanghai AI Laboratory"
+  - family-names: Wang
+    given-names: Limin
+    affiliation: "Nanjing University; Shanghai AI Laboratory"
+version: 1.0.0
+license: MIT
+repository-code: "https://github.com/MCG-NJU/AutoTavern"
+preferred-citation:
+  type: article
+  title: "Build, Don't Play: Self-Improving LLM Research Agents Develop a Hearthstone Battlegrounds AI That Rivals Top Players"
+  authors:
+    - family-names: Ma
+      given-names: Changlian
+    - family-names: Wang
+      given-names: Limin
+  year: 2026
+  url: "https://github.com/MCG-NJU/AutoTavern"

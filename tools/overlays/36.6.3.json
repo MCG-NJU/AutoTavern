@@ -1,0 +1,1761 @@
+{
+ "cards": {
+  "BG22_403": {
+   "atk": 8,
+   "hp": 5,
+   "text": "At the end of your turn, trigger the Battlecries of adjacent minions.",
+   "text_zh": "在你的回合结束时，触发相邻随从的战吼。"
+  },
+  "BG22_403_G": {
+   "atk": 16,
+   "hp": 10,
+   "text": "At the end of your turn, trigger the Battlecries of adjacent minions twice.",
+   "text_zh": "在你的回合结束时，触发相邻随从的战吼，触发两次。"
+  },
+  "BG25_009": {
+   "tier": 5
+  },
+  "BG25_009_G": {
+   "tier": 5
+  },
+  "BG26_810": {
+   "hp": 5,
+   "text": "Whenever you spend 5 Gold, give your Pirates +3/+1. (6 Gold left!)",
+   "text_zh": "每当你花掉5枚铸币，使你的海盗获得+3/+1。（还剩6枚！）"
+  },
+  "BG26_810_G": {
+   "hp": 10,
+   "text": "Whenever you spend 5 Gold, give your Pirates +3/+1 twice. (6 Gold left!)",
+   "text_zh": "每当你花掉5枚铸币，使你的海盗获得+3/+1，触发两次。（还剩6枚！）"
+  },
+  "BG26_814": {
+   "hp": 4,
+   "text": "Battlecry: Give a Pirate +2 Health. (Improved by each Gold you spent this turn!)",
+   "text_zh": "战吼：使一个海盗获得+2生命值。（在本回合中你每花费一枚铸币都会提升！）"
+  },
+  "BG26_814_G": {
+   "hp": 8,
+   "text": "Battlecry: Give a Pirate +2 Health twice. (Improved by each Gold you spent this turn!)",
+   "text_zh": "战吼：使一个海盗获得+2生命值，触发两次。（在本回合中你每花费一枚铸币都会提升！）"
+  },
+  "BG28_600": {
+   "lobby_req": [
+    "MECHANICAL"
+   ]
+  },
+  "BG28_601": {
+   "lobby_req": [
+    "MURLOC"
+   ]
+  },
+  "BG28_602": {
+   "lobby_req": [
+    "DRAGON"
+   ]
+  },
+  "BG28_603": {
+   "lobby_req": [
+    "BEAST"
+   ]
+  },
+  "BG28_604": {
+   "cost": 3,
+   "lobby_req": [
+    "UNDEAD"
+   ],
+   "text": "Destroy a friendly Undead. Your Undead have +8 Attack this game (wherever they are).8Destroy a friendly Undead. Your Undead have +8/+0 this game (wherever they are).",
+   "text_zh": "消灭一个友方亡灵。在本局对战中，你的亡灵拥有+8攻击力（无论它们在哪）。8消灭一个友方亡灵。在本局对战中，你的亡灵拥有+8/+0（无论它们在哪）。"
+  },
+  "BG28_606": {
+   "lobby_req": [
+    "NAGA"
+   ]
+  },
+  "BG28_607": {
+   "lobby_req": [
+    "DEMON"
+   ]
+  },
+  "BG28_609": {
+   "lobby_req": [
+    "PIRATE"
+   ]
+  },
+  "BG28_698": {
+   "lobby_req": [
+    "QUILBOAR"
+   ],
+   "text": "This plays 3 Blood Gems on a minion. It steals all Blood Gems from its neighbors.",
+   "text_zh": "本牌对一个随从使用3张鲜血宝石，并使其偷取相邻随从的所有鲜血宝石。"
+  },
+  "BG28_707": {
+   "atk": 8,
+   "hp": 6,
+   "text": "Whenever you cast a Tavern spell, give Elementals in the Tavern +4/+3 this game.",
+   "text_zh": "每当你施放一个酒馆法术，使酒馆中的元素在本局对战中获得+4/+3。"
+  },
+  "BG28_707_G": {
+   "atk": 16,
+   "hp": 12,
+   "text": "Whenever you cast a Tavern spell, give Elementals in the Tavern +4/+3 this game twice.",
+   "text_zh": "每当你施放一个 酒馆法术，使酒馆中的元素在本局对战中获得+4/+3，触发两次。"
+  },
+  "BG28_Reward_505": {
+   "text": "Whenever you summon a minion in combat, give it +1/+1. Avenge (4): Improve this permanently.",
+   "text_zh": "在战斗中，每当你召唤一个随从，使其获得+1/+1。复仇（4）：永久提升此效果。"
+  },
+  "BG30_MagicItem_406": {
+   "cost": 1
+  },
+  "BG30_MagicItem_423": {
+   "cost": 0
+  },
+  "BG30_MagicItem_437": {
+   "cost": 3
+  },
+  "BG30_MagicItem_544t": {
+   "cost": 1
+  },
+  "BG30_MagicItem_547": {
+   "cost": 0
+  },
+  "BG30_MagicItem_707": {
+   "cost": 2
+  },
+  "BG30_MagicItem_804": {
+   "cost": 0
+  },
+  "BG30_MagicItem_868": {
+   "cost": 4
+  },
+  "BG30_MagicItem_914": {
+   "cost": 0
+  },
+  "BG30_MagicItem_924": {
+   "cost": 2
+  },
+  "BG30_MagicItem_924t": {
+   "cost": 1
+  },
+  "BG30_MagicItem_951": {
+   "text": "After you sell 6 minions, get a random Elemental. (6 left!)",
+   "text_zh": "在你出售6个 随从后，随机获取一张元素牌。（还剩6个！）"
+  },
+  "BG30_MagicItem_952": {
+   "cost": 2,
+   "text": "Start of Combat: Give 3 friendly Elementals \"Deathrattle: Summon a Flourishing Frostling\".",
+   "text_zh": "战斗开始时： 使3个友方元素获得“亡语：召唤一个缤纷冰灵”。"
+  },
+  "BG30_MagicItem_989t": {
+   "text": "Your Undead have +20 Attack.",
+   "text_zh": "你的亡灵拥有+20攻击力。"
+  },
+  "BG31_323": {
+   "atk": 6,
+   "hp": 8,
+   "text": "After you play a Choose One card, this plays 2 Blood Gems on all your Quilboar.",
+   "text_zh": "在你使用一张抉择牌后，本随从对你的所有野猪人各使用2张鲜血宝石。"
+  },
+  "BG31_323_G": {
+   "atk": 12,
+   "hp": 16,
+   "text": "After you play a Choose One card, this plays 4 Blood Gems on all your Quilboar.",
+   "text_zh": "在你使用一张抉择牌后，本随从对你的所有野猪人各使用4张鲜血宝石。"
+  },
+  "BG31_327": {
+   "tier": 3
+  },
+  "BG31_327_G": {
+   "tier": 3
+  },
+  "BG31_810": {
+   "hp": 6,
+   "text": "Start of Combat: Give your other Elementals +3/+3. (Improves after you play an Elemental!)",
+   "text_zh": "战斗开始时：使你的其他元素获得+3/+3。（在你使用一张元素牌后提升！）"
+  },
+  "BG31_810_G": {
+   "hp": 12,
+   "text": "Start of Combat: Give your other Elementals +6/+6. (Improves after you play an Elemental!)",
+   "text_zh": "战斗开始时：使你的其他元素获得+6/+6。（在你使用一张元素牌后提升！）"
+  },
+  "BG31_819": {
+   "lobby_req": [
+    "ELEMENTAL"
+   ]
+  },
+  "BG31_891": {
+   "lobby_req": [
+    "PIRATE"
+   ]
+  },
+  "BG31_892": {
+   "lobby_req": [
+    "QUILBOAR"
+   ]
+  },
+  "BG32_337": {
+   "lobby_req": [
+    "MURLOC"
+   ]
+  },
+  "BG32_814": {
+   "lobby_req": [
+    "ELEMENTAL"
+   ]
+  },
+  "BG32_815": {
+   "lobby_req": [
+    "NAGA"
+   ]
+  },
+  "BG32_MagicItem_232": {
+   "text": "After you spend 7 Gold, give your Pirates +1/+1 and improve this. (7 Gold left!)",
+   "text_zh": "在你花掉7枚铸币后，使你的海盗获得+1/+1并提升此效果。（还剩7枚！）"
+  },
+  "BG32_MagicItem_276": {
+   "cost": 0
+  },
+  "BG32_MagicItem_278": {
+   "cost": 0
+  },
+  "BG32_MagicItem_283": {
+   "cost": 1
+  },
+  "BG32_MagicItem_284": {
+   "cost": 2
+  },
+  "BG32_MagicItem_301": {
+   "cost": 1
+  },
+  "BG32_MagicItem_306": {
+   "cost": 3
+  },
+  "BG32_MagicItem_350": {
+   "cost": 2
+  },
+  "BG32_MagicItem_360": {
+   "cost": 3
+  },
+  "BG32_MagicItem_361": {
+   "cost": 5
+  },
+  "BG32_MagicItem_416": {
+   "assoc": [
+    "DRAGON",
+    "MURLOC"
+   ],
+   "cost": 2
+  },
+  "BG32_MagicItem_801t": {
+   "cost": 3
+  },
+  "BG32_MagicItem_808": {
+   "cost": 1
+  },
+  "BG32_MagicItem_821": {
+   "cost": 3
+  },
+  "BG32_MagicItem_831": {
+   "cost": 4
+  },
+  "BG32_MagicItem_888": {
+   "cost": 3
+  },
+  "BG32_MagicItem_925": {
+   "cost": 6
+  },
+  "BG33_112": {
+   "lobby_req": [
+    "UNDEAD"
+   ]
+  },
+  "BG33_248": {
+   "lobby_req": [
+    "DRAGON"
+   ]
+  },
+  "BG33_811": {
+   "lobby_req": [
+    "PIRATE"
+   ]
+  },
+  "BG33_812": {
+   "lobby_req": [
+    "PIRATE"
+   ]
+  },
+  "BG33_813": {
+   "lobby_req": [
+    "PIRATE"
+   ]
+  },
+  "BG33_814": {
+   "lobby_req": [
+    "PIRATE"
+   ]
+  },
+  "BG33_815": {
+   "lobby_req": [
+    "PIRATE"
+   ]
+  },
+  "BG33_817": {
+   "lobby_req": [
+    "MECHANICAL"
+   ]
+  },
+  "BG33_819": {
+   "lobby_req": [
+    "BEAST"
+   ]
+  },
+  "BG33_828": {
+   "atk": 8,
+   "hp": 3,
+   "text": "Deathrattle: Give your minions +6/+6. Golden ones keep it permanently.",
+   "text_zh": "亡语：使你的随从获得+6/+6，金色随从可永久保留此效果。",
+   "tier": 5
+  },
+  "BG33_828_G": {
+   "atk": 16,
+   "hp": 6,
+   "text": "Deathrattle: Give your minions +6/+6 twice. Golden ones keep it permanently.",
+   "text_zh": "亡语：使你的随从获得+6/+6，触发两次。金色随从可永久保留此效果。",
+   "tier": 5
+  },
+  "BG33_883": {
+   "atk": 4,
+   "hp": 4,
+   "text": "Rally: This plays 4 permanent Blood Gems on itself.",
+   "text_zh": "进击：本随从对自身使用4张永久的鲜血宝石。"
+  },
+  "BG33_883_G": {
+   "atk": 8,
+   "hp": 8,
+   "text": "Rally: This plays 8 permanent Blood Gems on itself.",
+   "text_zh": "进击：本随从对自身使用8张永久的鲜血宝石。"
+  },
+  "BG33_898": {
+   "lobby_req": [
+    "MURLOC"
+   ]
+  },
+  "BG33_899": {
+   "lobby_req": [
+    "ELEMENTAL"
+   ]
+  },
+  "BG34_140": {
+   "hp": 5,
+   "text": "Rally: Summon the highest- Attack Murloc from your hand for this combat only.",
+   "text_zh": "进击：召唤你手牌中攻击力最高的鱼人，其登场仅限本场战斗。"
+  },
+  "BG34_140_G": {
+   "hp": 10,
+   "text": "Rally: Summon the 2 highest-Attack Murlocs from your hand for this combat only.",
+   "text_zh": "进击：召唤你手牌中攻击力最高的2个鱼人，其登场仅限本场 战斗。"
+  },
+  "BG34_444": {
+   "lobby_req": [
+    "ELEMENTAL"
+   ],
+   "text": "After the Tavern is Refreshed this game, give a random minion in it +9/+9.",
+   "text_zh": "在本局对战中，在酒馆刷新后，使酒馆中一个随机随从获得+9/+9。"
+  },
+  "BG34_682": {
+   "atk": 5,
+   "hp": 3,
+   "keywords_add": [
+    "BATTLECRY"
+   ],
+   "text": "Battlecry and Deathrattle: Get a Blood Gem Barrage.",
+   "text_zh": "战吼，亡语：获取一张鲜血宝石弹幕。"
+  },
+  "BG34_682_G": {
+   "atk": 10,
+   "hp": 6,
+   "keywords_add": [
+    "BATTLECRY"
+   ],
+   "text": "Battlecry and Deathrattle: Get 2 Blood Gem Barrages.",
+   "text_zh": "战吼，亡语：获取2张鲜血宝石弹幕。"
+  },
+  "BG34_689": {
+   "lobby_req": [
+    "QUILBOAR"
+   ],
+   "text": "After the Tavern is Refreshed this game, give its minions +2/+2 worth of Blood Gems.",
+   "text_zh": "在本局对战中，在酒馆刷新后，使其中的随从获得+2/+2的鲜血宝石。",
+   "tier": 4
+  },
+  "BG34_888": {
+   "lobby_req": [
+    "UNDEAD"
+   ]
+  },
+  "BG34_889": {
+   "lobby_req": [
+    "DRAGON"
+   ]
+  },
+  "BG34_990": {
+   "lobby_req": [
+    "PIRATE"
+   ]
+  },
+  "BG34_Giant_001": {
+   "tw_types": [
+    "PIRATE"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_006": {
+   "tw_types": [
+    "ELEMENTAL"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_007": {
+   "tw_types": [
+    "MECHANICAL"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_009": {
+   "tw_types": [
+    "BEAST"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_012": {
+   "tw_types": [
+    "ELEMENTAL"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_015": {
+   "tw_types": [
+    "DRAGON",
+    "PIRATE"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_017": {
+   "tw_types": [
+    "MURLOC"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_029": {
+   "tw_types": [
+    "DRAGON"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_032": {
+   "tw_types": [
+    "ELEMENTAL"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_034": {
+   "tw_types": [
+    "UNDEAD"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_038": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_Giant_039": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_Giant_040": {
+   "tw_types": [
+    "ELEMENTAL"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_041": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_Giant_042": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_Giant_064": {
+   "tw_types": [
+    "DRAGON"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_066": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_Giant_067": {
+   "tw_types": [
+    "ELEMENTAL"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_069": {
+   "tw_types": [
+    "QUILBOAR"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_071": {
+   "tw_types": [
+    "MURLOC"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_072": {
+   "tw_types": [
+    "MURLOC"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_074t": {
+   "tw_types": [
+    "PIRATE"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_081": {
+   "tw_types": [
+    "UNDEAD"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_082": {
+   "tw_min_minions": 4,
+   "tw_types": [
+    "UNDEAD"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_088": {
+   "tw_types": [
+    "DRAGON"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_091": {
+   "tw_types": [
+    "DRAGON"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_102": {
+   "tw_types": [
+    "QUILBOAR"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_110": {
+   "tw_types": [
+    "ELEMENTAL"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_120": {
+   "tw_types": [
+    "MECHANICAL"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_201": {
+   "tw_types": [
+    "BEAST"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_202": {
+   "tw_types": [
+    "BEAST"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_204": {
+   "tw_types": [
+    "UNDEAD"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_205": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_Giant_206": {
+   "tw_types": [
+    "MURLOC"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_207": {
+   "tw_types": [
+    "MURLOC"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_208": {
+   "tw_types": [
+    "PIRATE"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_209": {
+   "tw_types": [
+    "MECHANICAL"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_300": {
+   "tw_types": [
+    "DEMON"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_302": {
+   "tw_types": [
+    "MECHANICAL"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_305": {
+   "tw_min_minions": 4,
+   "tw_types": [
+    "QUILBOAR"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_306": {
+   "tw_types": [
+    "QUILBOAR"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_309": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_Giant_311": {
+   "tw_types": [
+    "DEMON"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_313": {
+   "tw_types": [
+    "DEMON"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_314": {
+   "tw_types": [
+    "DRAGON"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_318": {
+   "tw_types": [
+    "MURLOC"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_319": {
+   "tw_types": [
+    "MURLOC"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_320": {
+   "tw_types": [
+    "MURLOC"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_321": {
+   "tw_types": [
+    "MURLOC"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_327": {
+   "tw_types": [
+    "PIRATE"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_328": {
+   "tw_types": [
+    "PIRATE"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_330": {
+   "tw_types": [
+    "UNDEAD"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_331": {
+   "tw_types": [
+    "UNDEAD"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_332": {
+   "tw_types": [
+    "UNDEAD"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_333": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_Giant_342": {
+   "tw_types": [
+    "UNDEAD"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_360": {
+   "tw_types": [
+    "DEMON"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_370": {
+   "tw_types": [
+    "BEAST"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_580": {
+   "tw_types": [
+    "ELEMENTAL"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_581": {
+   "tw_types": [
+    "BEAST"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_582": {
+   "tw_types": [
+    "BEAST"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_583": {
+   "tw_types": [
+    "DEMON"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_584": {
+   "tw_types": [
+    "DEMON"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_586": {
+   "tw_types": [
+    "ELEMENTAL"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_589": {
+   "tw_types": [
+    "PIRATE"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_590": {
+   "tw_types": [
+    "UNDEAD"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_591": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_Giant_593": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_Giant_594": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_Giant_595": {
+   "tw_types": [
+    "BEAST"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_596": {
+   "tw_types": [
+    "DEMON"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_597": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_Giant_598": {
+   "tw_min_minions": 4,
+   "tw_types": [
+    "MECHANICAL"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_599": {
+   "tw_types": [
+    "MECHANICAL"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_602": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_Giant_604": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_Giant_605": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_Giant_608": {
+   "tw_types": [
+    "QUILBOAR"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_609": {
+   "tw_types": [
+    "BEAST",
+    "UNDEAD"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_618": {
+   "tw_types": [
+    "UNDEAD"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_644": {
+   "tw_types": [
+    "QUILBOAR"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_654": {
+   "tw_types": [
+    "BEAST",
+    "UNDEAD"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_671": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_Giant_674": {
+   "tw_types": [
+    "DEMON"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_675": {
+   "tw_types": [
+    "DRAGON",
+    "ELEMENTAL"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_676": {
+   "tw_types": [
+    "ELEMENTAL"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_677": {
+   "tw_types": [
+    "MECHANICAL"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_679": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_Giant_680": {
+   "tw_types": [
+    "PIRATE"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_683": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_Giant_684": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_Giant_686": {
+   "tw_types": [
+    "ELEMENTAL"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_687": {
+   "tw_types": [
+    "BEAST"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_777": {
+   "tw_types": [
+    "ELEMENTAL"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Giant_801": {
+   "tw_types": [
+    "MURLOC"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_HeroPowerSpell_003": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_HeroPowerSpell_005": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_HeroPowerSpell_006": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_HeroPowerSpell_008": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_HeroPowerSpell_009": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_HeroPowerSpell_010": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_HeroPowerSpell_012": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_HeroPowerSpell_015": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_HeroPowerSpell_016": {
+   "lobby_req": [
+    "MURLOC"
+   ],
+   "tw_types": [
+    "MURLOC"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_HeroPowerSpell_017": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_PreMadeChamp_004": {
+   "tw_types": [
+    "BEAST"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_PreMadeChamp_011": {
+   "tw_types": [
+    "DEMON"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_PreMadeChamp_013": {
+   "tw_types": [
+    "DEMON"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_PreMadeChamp_020": {
+   "tw_types": [
+    "DRAGON"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_PreMadeChamp_022": {
+   "tw_types": [
+    "DRAGON"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_PreMadeChamp_031": {
+   "tw_types": [
+    "ELEMENTAL"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_PreMadeChamp_032": {
+   "tw_types": [
+    "ELEMENTAL"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_PreMadeChamp_049": {
+   "tw_types": [
+    "MURLOC"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_PreMadeChamp_065": {
+   "tw_types": [
+    "PIRATE"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_PreMadeChamp_067": {
+   "tw_types": [
+    "PIRATE"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_PreMadeChamp_076": {
+   "tw_types": [
+    "QUILBOAR"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_PreMadeChamp_078": {
+   "tw_types": [
+    "QUILBOAR"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_PreMadeChamp_083": {
+   "tw_types": [
+    "UNDEAD"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_PreMadeChamp_091": {
+   "tw_types": [
+    "DEMON"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_PreMadeChamp_200": {
+   "tw_types": [
+    "DRAGON"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Treasure_300": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_Treasure_301": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_Treasure_302": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_Treasure_606": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_Treasure_607": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_Treasure_608": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_Treasure_609": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_Treasure_620": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_Treasure_625": {
+   "tw_types": [],
+   "tw_weight": 50
+  },
+  "BG34_Treasure_900": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_Treasure_903": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_Treasure_905": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_Treasure_912": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_Treasure_917": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_Treasure_919": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_Treasure_932": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_Treasure_933": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_Treasure_934": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_Treasure_937": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_Treasure_940": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_Treasure_950": {
+   "lobby_req": [
+    "NAGA"
+   ]
+  },
+  "BG34_Treasure_951": {
+   "lobby_req": [
+    "MURLOC"
+   ],
+   "tw_types": [
+    "MURLOC"
+   ],
+   "tw_weight": 100
+  },
+  "BG34_Treasure_953": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG34_Treasure_955": {
+   "tw_types": [],
+   "tw_weight": 100
+  },
+  "BG35_149": {
+   "lobby_req": [
+    "MURLOC"
+   ]
+  },
+  "BG35_910": {
+   "lobby_req": [
+    "ELEMENTAL"
+   ]
+  },
+  "BG35_911": {
+   "lobby_req": [
+    "ELEMENTAL"
+   ]
+  },
+  "BG35_922": {
+   "lobby_req": [
+    "NAGA"
+   ]
+  },
+  "BG35_MagicItem_156": {
+   "cost": 7
+  },
+  "BG35_MagicItem_301": {
+   "cost": 1
+  },
+  "BG35_MagicItem_306": {
+   "cost": 2
+  },
+  "BG35_MagicItem_711": {
+   "cost": 2
+  },
+  "BG35_MagicItem_712": {
+   "cost": 1
+  },
+  "BG35_MagicItem_733": {
+   "cost": 2
+  },
+  "BG35_MagicItem_742": {
+   "cost": 3
+  },
+  "BG35_MagicItem_743": {
+   "cost": 1
+  },
+  "BG35_MagicItem_851": {
+   "cost": 0
+  },
+  "BG36_100": {
+   "tier": 2
+  },
+  "BG36_100_G": {
+   "tier": 2
+  },
+  "BG36_101": {
+   "atk": 3,
+   "hp": 2,
+   "tier": 3
+  },
+  "BG36_101_G": {
+   "atk": 6,
+   "hp": 4,
+   "tier": 3
+  },
+  "BG36_108": {
+   "atk": 1,
+   "hp": 2,
+   "text": "Whenever you cast a Tavern spell, give this and your Deity +1/+2.",
+   "text_zh": "每当你施放一个酒馆法术，使本随从和你的神明获得+1/+2。"
+  },
+  "BG36_108_G": {
+   "atk": 2,
+   "hp": 4,
+   "text": "Whenever you cast a Tavern spell, give this and your Deity +2/+4.",
+   "text_zh": "每当你施放一个酒馆法术，使本随从和你的神明获得+2/+4。"
+  },
+  "BG36_109": {
+   "text": "Whenever a card is added to your hand, give your Deity +4/+5.",
+   "text_zh": "每当一张牌被置入你的手牌，使你的神明获得+4/+5。"
+  },
+  "BG36_109_G": {
+   "text": "Whenever a card is added to your hand, give your Deity +8/+10.",
+   "text_zh": "每当一张牌被置入你的手牌，使你的神明获得+8/+10。"
+  },
+  "BG36_110": {
+   "text": "Battlecry: Give your Deity +2/+1.",
+   "text_zh": "战吼：使你的神明获得+2/+1。"
+  },
+  "BG36_110_G": {
+   "text": "Battlecry: Give your Deity +4/+2.",
+   "text_zh": "战吼：使你的神明获得+4/+2。"
+  },
+  "BG36_111": {
+   "atk": 10,
+   "hp": 13,
+   "text": "Whenever you cast a Tavern spell, give your minions and Deity +3/+3.",
+   "text_zh": "每当你施放一个酒馆法术，使你的随从和神明获得+3/+3。"
+  },
+  "BG36_111_G": {
+   "atk": 20,
+   "hp": 26,
+   "text": "Whenever you cast a Tavern spell, give your minions and Deity +6/+6.",
+   "text_zh": "每当你施放一个酒馆法术，使你的随从和神明获得+6/+6。"
+  },
+  "BG36_115": {
+   "atk": 4,
+   "hp": 5,
+   "keywords_add": [
+    "END_OF_TURN_TRIGGER"
+   ],
+   "keywords_remove": [
+    "DEATHRATTLE"
+   ],
+   "text": "At the end of your turn, get a Sludge Corrosion.",
+   "text_zh": "在你的回合结束时，获取一张腐泥侵蚀。"
+  },
+  "BG36_115_G": {
+   "atk": 8,
+   "hp": 10,
+   "keywords_add": [
+    "END_OF_TURN_TRIGGER"
+   ],
+   "keywords_remove": [
+    "DEATHRATTLE"
+   ],
+   "text": "At the end of your turn, get 2 Sludge Corrosions.",
+   "text_zh": "在你的回合结束时，获取2张腐泥侵蚀。"
+  },
+  "BG36_246": {
+   "lobby_req": [
+    "DRAGON"
+   ]
+  },
+  "BG36_301t": {
+   "lobby_req": [
+    "ABERRATION"
+   ]
+  },
+  "BG36_303": {
+   "lobby_req": [
+    "ABERRATION"
+   ]
+  },
+  "BG36_311": {
+   "atk": 2,
+   "hp": 2
+  },
+  "BG36_311_G": {
+   "atk": 4,
+   "hp": 4
+  },
+  "BG36_318": {
+   "text": "Deathrattle: Give your Deity +2/+1. (Improved by each Tavern spell you've cast this game!)",
+   "text_zh": "亡语：使你的神明获得+2/+1。（在本局对战中你每施放一个酒馆法术都会提升！）"
+  },
+  "BG36_318_G": {
+   "text": "Deathrattle: Give your Deity +4/+2. (Improved by each Tavern spell you've cast this game!)",
+   "text_zh": "亡语：使你的神明获得+4/+2。（在本局对战中你每施放一个酒馆法术都会提升！）"
+  },
+  "BG36_320": {
+   "atk": 7,
+   "hp": 7,
+   "text": "At the end of your turn, discard your 3 left-most Tavern spells. Gain +7/+7 for each discarded.",
+   "text_zh": "在你的回合结束时，弃掉你最左边的3张酒馆法术牌。每弃掉一张，便获得+7/+7。"
+  },
+  "BG36_320_G": {
+   "atk": 14,
+   "hp": 14,
+   "text": "At the end of your turn, discard your 6 left-most Tavern spells. Gain +7/+7 for each discarded.",
+   "text_zh": "在你的回合结束时，弃掉你最左边的6张酒馆法术牌。每弃掉一张，便获得+7/+7。"
+  },
+  "BG36_360_Gt3": {
+   "hp": 12,
+   "text": "Whenever you play a card, gain +6 Attack.",
+   "text_zh": "每当你使用一张牌，获得+6攻击力。6每当你使用一张牌，获得+6/+0。"
+  },
+  "BG36_360_Gt6": {
+   "atk": 6,
+   "hp": 6,
+   "text": "Has +6/+6 for each Battlecry you've triggered this game (wherever this is).",
+   "text_zh": "在本局对战中，你每触发过一次战吼，便拥有+6/+6（无论本随从在哪）。"
+  },
+  "BG36_360t3": {
+   "hp": 6,
+   "text": "Whenever you play a card, gain +3 Attack.",
+   "text_zh": "每当你使用一张牌，获得+3攻击力。3每当你使用一张牌，获得+3/+0。"
+  },
+  "BG36_360t6": {
+   "atk": 3,
+   "hp": 3,
+   "text": "Has +3/+3 for each Battlecry you've triggered this game (wherever this is).",
+   "text_zh": "在本局对战中，你每触发过一次战吼，便拥有+3/+3（无论本随从在哪）。"
+  },
+  "BG36_364": {
+   "atk": 4,
+   "text": "Start of Combat: Give your minions +4/+3. (Permanently improves after a friendly minion loses Divine Shield!)",
+   "text_zh": "战斗开始时：使你的随从获得+4/+3。（在一个友方随从失去圣盾后永久提升！）"
+  },
+  "BG36_364_G": {
+   "atk": 8,
+   "text": "Start of Combat: Give your minions +8/+6. (Permanently improves after a friendly minion loses Divine Shield!)",
+   "text_zh": "战斗开始时：使你的随从获得+8/+6。（在一个友方随从失去圣盾后永久提升！）"
+  },
+  "BG36_367": {
+   "atk": 4,
+   "hp": 8,
+   "text": "After you buy 3 cards, Magnetize a random Volumizer to this and get a copy of it. (3 left!)",
+   "text_zh": "在你购买3张牌后，随机为本随从磁力吸附一个扩音机，并获取一张该扩音机的复制。（还剩3张！）"
+  },
+  "BG36_367_G": {
+   "atk": 8,
+   "hp": 16,
+   "text": "After you buy 3 cards, Magnetize a random Volumizer to this and get two copies of it. (3 left!)",
+   "text_zh": "在你购买3张牌后，随机为本随从磁力吸附一个扩音机，并获取两张该扩音机的复制。（还剩3张！）"
+  },
+  "BG36_371": {
+   "lobby_req": [
+    "ABERRATION"
+   ]
+  },
+  "BG36_372": {
+   "atk": 10,
+   "hp": 10,
+   "text": "Divine Shield Has +30/+30 if you have 15 or less Health.",
+   "text_zh": "圣盾。如果你的生命值小于或等于15点，拥有+30/+30。"
+  },
+  "BG36_372_G": {
+   "atk": 20,
+   "hp": 20,
+   "text": "Divine Shield Has +60/+60 if you have 15 or less Health.",
+   "text_zh": "圣盾。如果你的生命值小于或等于15点，拥有+60/+60。"
+  },
+  "BG36_514": {
+   "atk": 8,
+   "hp": 8,
+   "text": "After a friendly minion is Reborn, gain Divine Shield and +8/+8.",
+   "text_zh": "在一个友方随从复生后，获得圣盾和+8/+8。"
+  },
+  "BG36_514_G": {
+   "atk": 16,
+   "hp": 16,
+   "text": "After a friendly minion is Reborn, gain Divine Shield and +16/+16.",
+   "text_zh": "在一个友方随从复生后，获得圣盾和+16/+16。"
+  },
+  "BG36_700": {
+   "atk": 7,
+   "hp": 7,
+   "tier": 5
+  },
+  "BG36_700_G": {
+   "atk": 14,
+   "hp": 14,
+   "tier": 5
+  },
+  "BG36_848": {
+   "atk": 6,
+   "hp": 9,
+   "text": "Avenge (3): Get a plain copy of a minion that started in your warband this combat.",
+   "text_zh": "复仇（3）：获取本场战斗中在你初始战队中的一个随从的一张原始版复制。"
+  },
+  "BG36_848_G": {
+   "atk": 12,
+   "hp": 18,
+   "text": "Avenge (3): Get 2 plain copies of a minion that started in your warband this combat.",
+   "text_zh": "复仇（3）：获取本场战斗中在你初始战队中的一个随从的2张原始版复制。"
+  },
+  "BG36_851": {
+   "atk": 6,
+   "hp": 8,
+   "text": "Whenever you play a Mech, Magnetize a 2/3 Satellite to it and improve this.",
+   "text_zh": "每当你使用一张机械牌，对其磁力吸附一个2/3的卫星并提升此效果。"
+  },
+  "BG36_851_G": {
+   "atk": 12,
+   "hp": 16,
+   "text": "Whenever you play a Mech, Magnetize a 4/6 Satellite to it and improve this.",
+   "text_zh": "每当你使用一张机械牌，对其磁力吸附一个4/6的卫星并提升此效果。"
+  },
+  "BG36_880": {
+   "lobby_req": [
+    "DEMON"
+   ]
+  },
+  "BG36_HERO_000": {
+   "lobby_req": [
+    "ABERRATION"
+   ]
+  },
+  "BG36_MagicItem_206": {
+   "cost": 3
+  },
+  "BG36_MagicItem_220": {
+   "cost": 0
+  },
+  "BG36_MagicItem_301": {
+   "cost": 1
+  },
+  "BG36_MagicItem_307": {
+   "cost": 0
+  },
+  "BG36_MagicItem_370": {
+   "cost": 6,
+   "text": "Discover a plain copy of a friendly minion with a Dark Gift. Repeat at the start of every 2 turns. (2 turns left!)",
+   "text_zh": "发现一个友方随从的原始版复制，该复制具有黑暗之赐。每2个回合，在回合开始时，重复此效果。（还剩2回合！）"
+  },
+  "BG36_MagicItem_390": {
+   "cost": 2
+  },
+  "BG36_MagicItem_400": {
+   "cost": 3,
+   "lobby_req": [
+    "ABERRATION"
+   ]
+  },
+  "BG36_MagicItem_402": {
+   "cost": 4,
+   "lobby_req": [
+    "ABERRATION"
+   ]
+  },
+  "BG36_MagicItem_403": {
+   "cost": 2,
+   "lobby_req": [
+    "ABERRATION"
+   ]
+  },
+  "BG36_MagicItem_403t": {
+   "cost": 3,
+   "lobby_req": [
+    "ABERRATION"
+   ]
+  },
+  "BG36_MagicItem_404": {
+   "cost": 2,
+   "lobby_req": [
+    "ABERRATION"
+   ]
+  },
+  "BG36_MagicItem_404t": {
+   "cost": 3,
+   "lobby_req": [
+    "ABERRATION"
+   ]
+  },
+  "BG36_MagicItem_406": {
+   "lobby_req": [
+    "ABERRATION"
+   ]
+  },
+  "BG36_MagicItem_416": {
+   "cost": 4,
+   "lobby_req": [
+    "ABERRATION"
+   ]
+  },
+  "BG36_MagicItem_417": {
+   "cost": 3,
+   "lobby_req": [
+    "ABERRATION"
+   ]
+  },
+  "BG36_MagicItem_418": {
+   "cost": 2,
+   "lobby_req": [
+    "ABERRATION"
+   ]
+  },
+  "BG36_MagicItem_430": {
+   "cost": 5,
+   "lobby_req": [
+    "ABERRATION"
+   ],
+   "text": "Get a Sludge Corrosion. After you discard a spell, get a Sludge Corrosion.",
+   "text_zh": "获取一张腐泥侵蚀。在你弃掉一张法术牌后，获取一张腐泥侵蚀。"
+  },
+  "BG36_MagicItem_600": {
+   "cost": 6,
+   "lobby_req": [
+    "ABERRATION"
+   ]
+  },
+  "BG36_MagicItem_602": {
+   "cost": 4,
+   "lobby_req": [
+    "ABERRATION"
+   ]
+  },
+  "BG36_MagicItem_606": {
+   "cost": 0,
+   "lobby_req": [
+    "ABERRATION"
+   ]
+  },
+  "BG36_MagicItem_801": {
+   "cost": 2
+  },
+  "BG36_MagicItem_810": {
+   "cost": 0
+  },
+  "BG36_MagicItem_810t": {
+   "cost": 0
+  },
+  "BG36_MagicItem_841": {
+   "cost": 2
+  },
+  "BG36_MagicItem_850": {
+   "cost": 0
+  },
+  "BG36_MagicItem_852": {
+   "cost": 2,
+   "lobby_req": [
+    "ABERRATION"
+   ]
+  },
+  "BG36_MidGameEffect_000t30t": {
+   "window": [
+    5,
+    6
+   ]
+  },
+  "BG36_MidGameEffect_000t81": {
+   "window": [
+    8,
+    null
+   ]
+  },
+  "BGDUO_700": {
+   "atk": 5,
+   "hp": 6,
+   "text": "After you discard a card, Pass a plain copy of it. (Once per turn.)",
+   "text_zh": "在你弃掉一张牌后，传递一张该牌的原始版复制。（每回合一次。）"
+  },
+  "BGDUO_700_G": {
+   "atk": 10,
+   "hp": 12,
+   "text": "After you discard a card, Pass a plain copy of it. (Twice per turn.)",
+   "text_zh": "在你弃掉一张牌后，传递一张该牌的原始版复制。（每回合两次。）2在你弃掉一张牌后，传递一张该牌的原始版复制。（还剩2次。）"
+  },
+  "BGFYM_000": {
+   "tier": 1
+  },
+  "BGFYM_000_G": {
+   "tier": 1
+  },
+  "BGFYM_011": {
+   "tier": 1
+  },
+  "BGFYM_011_G": {
+   "tier": 1
+  },
+  "BG_OldGod": {
+   "quest_goal": 4,
+   "text": "After 4 friendly Aberrations die each combat, awaken a 1/1 130610. (4 left!)4After 4 friendly Aberrations die each combat, awaken a 1/1 130610. (Done!)",
+   "text_zh": "每场战斗中，在4个友方畸变怪死亡后，唤醒一个1/1的130610。（还剩4个！）4每场战斗中，在4个友方畸变怪死亡后，唤醒一个1/1的130610。（已完成！）"
+  },
+  "TB_BaconShop_HERO_29_Buddy": {
+   "races": [
+    "ABERRATION"
+   ]
+  },
+  "TB_BaconShop_HERO_29_Buddy_G": {
+   "races": [
+    "ABERRATION"
+   ]
+  }
+ },
+ "meta": {
+  "client_version": "36.6.3.253932",
+  "overlay": "tools/overlays/36.6.3.json (hsdata / HearthstoneJSON 253932)",
+  "server_patch": "36.6.3"
+ },
+ "pools": {
+  "hero": {
+   "add": [
+    "BG23_HERO_306",
+    "BG34_HERO_000",
+    "BG34_HERO_004"
+   ]
+  },
+  "minion": {
+   "add": [
+    "BG33_828",
+    "BG34_403"
+   ],
+   "remove": [
+    "BG34_683",
+    "BG26_537"
+   ]
+  },
+  "timewarp": {
+   "add": [],
+   "remove": [
+    "BG34_Giant_002",
+    "BG34_Giant_002_G",
+    "BG34_Giant_008",
+    "BG34_Giant_008_G",
+    "BG34_Giant_010",
+    "BG34_Giant_010_G",
+    "BG34_Giant_021",
+    "BG34_Giant_021_G",
+    "BG34_Giant_024",
+    "BG34_Giant_024_G",
+    "BG34_Giant_027",
+    "BG34_Giant_027_G",
+    "BG34_Giant_031",
+    "BG34_Giant_031_G",
+    "BG34_Giant_065",
+    "BG34_Giant_065_G",
+    "BG34_Giant_068",
+    "BG34_Giant_068_G",
+    "BG34_Giant_078",
+    "BG34_Giant_078_G",
+    "BG34_Giant_104",
+    "BG34_Giant_104_G",
+    "BG34_Giant_105",
+    "BG34_Giant_105_G",
+    "BG34_Giant_121",
+    "BG34_Giant_121_G",
+    "BG34_Giant_310",
+    "BG34_Giant_310_G",
+    "BG34_Giant_317",
+    "BG34_Giant_317_G",
+    "BG34_Giant_324",
+    "BG34_Giant_324_G",
+    "BG34_Giant_326",
+    "BG34_Giant_326_G",
+    "BG34_Giant_335",
+    "BG34_Giant_335_G",
+    "BG34_Giant_336",
+    "BG34_Giant_336_G",
+    "BG34_Giant_361",
+    "BG34_Giant_361_G",
+    "BG34_Giant_362",
+    "BG34_Giant_362_G",
+    "BG34_Giant_376",
+    "BG34_Giant_376_G",
+    "BG34_Giant_588",
+    "BG34_Giant_588_G",
+    "BG34_Giant_592",
+    "BG34_Giant_592_G",
+    "BG34_Giant_601",
+    "BG34_Giant_601_G",
+    "BG34_Giant_603",
+    "BG34_Giant_603_G",
+    "BG34_Giant_610",
+    "BG34_Giant_610_G",
+    "BG34_Giant_619",
+    "BG34_Giant_619_G",
+    "BG34_Giant_656",
+    "BG34_Giant_656_G",
+    "BG34_Giant_681",
+    "BG34_Giant_681_G",
+    "BG34_HeroPowerSpell_018",
+    "BG34_HeroPowerSpell_022",
+    "BG34_PreMadeChamp_002",
+    "BG34_PreMadeChamp_002_G",
+    "BG34_PreMadeChamp_038",
+    "BG34_PreMadeChamp_038_G",
+    "BG34_PreMadeChamp_047",
+    "BG34_PreMadeChamp_047_G",
+    "BG34_PreMadeChamp_090",
+    "BG34_PreMadeChamp_090_G",
+    "BG34_Treasure_902",
+    "BG34_Treasure_966",
+    "BG34_Treasure_990",
+    "BG34_Treasure_990_G",
+    "BG34_Treasure_994",
+    "BG34_Treasure_994_G"
+   ]
+  },
+  "trinket": {
+   "add": [
+    "BG36_MagicItem_606"
+   ],
+   "remove": [
+    "BG32_MagicItem_894",
+    "BG35_MagicItem_300t"
+   ]
+  }
+ }
+}
