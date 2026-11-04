@@ -8,7 +8,7 @@ authors:
   - family-names: Wang
     given-names: Limin
     affiliation: "Nanjing University; Shanghai AI Laboratory"
-version: 1.0.0
+version: 1.1.0
 license: MIT
 repository-code: "https://github.com/MCG-NJU/AutoTavern"
 preferred-citation:
@@ -20,4 +20,8 @@ preferred-citation:
     - family-names: Wang
       given-names: Limin
   year: 2026
-  url: "https://github.com/MCG-NJU/AutoTavern"
+  journal: "arXiv preprint arXiv:2610.33845v1"
+  url: "https://arxiv.org/abs/2610.33845v1"
+  identifiers:
+    - type: other
+      value: "arXiv:2610.33845v1"

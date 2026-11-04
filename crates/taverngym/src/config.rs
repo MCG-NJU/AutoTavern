@@ -497,9 +497,9 @@ impl RulesConfig {
             4 => [(&[2], false), (&[2], false), (&[3], false)],
             5 => [(&[3], false), (&[3], false), (&[3], false)],
             6 => [(&[3], true), (&[4], false), (&[4], false)],
-            7 => [(&[4], true), (&[4], false), (&[4], false)],
-            8 => [(&[4], true), (&[5], false), (&[5], false)],
-            9 => [(&[4, 5], true), (&[5], false), (&[6], false)],
+            7 => [(&[4], true), (&[4], true), (&[4], false)],
+            8 => [(&[4], true), (&[5], true), (&[5], false)],
+            9 => [(&[4, 5], true), (&[5], true), (&[6], false)],
             _ => [(&[5], true), (&[5, 6], true), (&[5, 6], false)],
         }
     }

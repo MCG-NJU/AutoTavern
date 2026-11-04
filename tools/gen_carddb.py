@@ -21,8 +21,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 BUNDLE = Path(os.environ.get("TAVERNGYM_BUNDLE", ROOT / "content_pack"))
 OUT = ROOT / "crates" / "taverngym" / "data" / "cards.json"
-# Patch overlay (36.6.3) on top of the read-only 253216 / 36.6.1 resource pack.
-OVERLAY = ROOT / "tools" / "overlays" / "36.6.3.json"
+# Patch overlay (37.0.2) on top of the read-only 253216 / 36.6.1 resource pack.
+OVERLAY = ROOT / "tools" / "overlays" / "37.0.2.json"
 
 KINDS = {
     "minion": "minion",
@@ -51,6 +51,9 @@ def clean(text):
 def split_variants(text):
     """Card texts with a progress counter come as two variants glued together with the
     counter's value: "A (3 left!)3A (Done!)". Returns [first, second] ("" when single)."""
+    if text.count("@") == 1:
+        first, second = text.split("@", 1)
+        return [first.strip(), second.strip()]
     head = text[:5]
     for m in re.finditer(r"\d+", text):
         # The second variant may itself start with a digit ("...2" + "2回合后...").
@@ -87,12 +90,12 @@ def text_keywords(kind, kws, text):
 
 
 def load_json(rel):
-    return json.loads((BUNDLE / rel).read_text())
+    return json.loads((BUNDLE / rel).read_text(encoding="utf-8"))
 
 
 def build():
     catalogue = {}
-    with open(BUNDLE / "data" / "catalogue.jsonl") as f:
+    with open(BUNDLE / "data" / "catalogue.jsonl", encoding="utf-8") as f:
         for line in f:
             o = json.loads(line)
             catalogue[o["id"]] = o
@@ -102,7 +105,7 @@ def build():
     quest_goal = {}  # QUEST_PROGRESS_TOTAL (base quest / reward progress goal)
     prize_tier = {}  # BATTLEGROUNDS_DARKMOON_PRIZE_TURN (Darkmoon Prize tier 1-4)
     reward_dbf = {}  # BACON_CARD_DBID_REWARD: the card a Quest Reward refers to
-    with open(BUNDLE / "data" / "raw_selected_entities.jsonl") as f:
+    with open(BUNDLE / "data" / "raw_selected_entities.jsonl", encoding="utf-8") as f:
         for line in f:
             o = json.loads(line)
             s = (o.get("enUS") or {}).get("spellSchool")
@@ -281,16 +284,16 @@ def main():
         sys.exit(f"no resource bundle at {BUNDLE} (pass --bundle DIR or set TAVERNGYM_BUNDLE)")
     db = build()
     if OVERLAY.exists():
-        db = apply_overlay(db, json.loads(OVERLAY.read_text()))
+        db = apply_overlay(db, json.loads(OVERLAY.read_text(encoding="utf-8")))
     db = finish(db)
     text = render(db)
     if "--check" in sys.argv:
-        if not OUT.exists() or OUT.read_text() != text:
+        if not OUT.exists() or OUT.read_text(encoding="utf-8") != text:
             print(f"{OUT} is stale; run python tools/gen_carddb.py")
             sys.exit(1)
         print("cards.json up to date")
         return
-    OUT.write_text(text)
+    OUT.write_text(text, encoding="utf-8")
     print(f"wrote {OUT} ({len(text) // 1024} KiB)")
 
 

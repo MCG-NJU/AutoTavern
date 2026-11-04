@@ -132,7 +132,7 @@ fn every_pair_of_a_spell_gets_the_bonus_of_the_board() {
     );
     assert_eq!(
         text(&mut g, "BG34_990", 0).as_deref(), // Wave of Gold
-        Some("Give your minions +6/+4. Give Golden ones another +6/+4.")
+        Some("Give your minions +6/+5. Give Golden ones another +6/+5.")
     );
     assert_eq!(
         text(&mut g, "BG31_886", 0).as_deref(), // Forest's Bounty

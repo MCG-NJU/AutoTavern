@@ -186,7 +186,7 @@ checksum = "adb6935a6f5c20170eeceb1a3835a49e12e19d792f6dd344ccc76a985ca5a6ca"
 
 [[package]]
 name = "taverngym"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -194,7 +194,7 @@ dependencies = [
 
 [[package]]
 name = "taverngym-py"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "pyo3",
  "serde_json",

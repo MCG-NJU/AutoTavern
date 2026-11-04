@@ -4,6 +4,25 @@ use super::*;
 
 pub fn scripts() -> Vec<(&'static str, Script)> {
     vec![
+        // Murcules: a kill rewards one random minion in hand (not the leftmost).
+        (
+            "BG27_023",
+            Script {
+                on_event: Some(|c, me, e| {
+                    if matches!(e, Event::Killed { side, killer, .. }
+                        if *side == me.side && *killer == me.eid)
+                    {
+                        let hand = c.hand_minions(me.side);
+                        if !hand.is_empty() {
+                            let target = hand[c.g.rng.below(hand.len())].0;
+                            c.buff(target, 3 * me.g(), 3 * me.g());
+                        }
+                    }
+                }),
+                listens: ev::KILLED,
+                ..E
+            },
+        ),
         // Flighty Scout: SoC if in hand, summon a copy (golden: with double stats).
         (
             "BG32_330",

@@ -276,19 +276,20 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
             "BG30_MagicItem_546",
             Script {
                 on_event: Some(|c, me, e| {
-                    if !c.combat || !matches!(e, Event::Attacks { side, .. } if *side == me.side) {
+                    let Event::Attacks { side, attacker, .. } = e else {
+                        return;
+                    };
+                    if !c.combat
+                        || *side != me.side
+                        || !c.minion(*attacker).is_some_and(|m| m.is(Races::QUILBOAR))
+                    {
                         return;
                     }
-                    if c.add_combat_data(me.side, me.card, 1) % 2 == 0 {
-                        for q in c.friendly_where(me.side, |m| m.is(Races::QUILBOAR)) {
-                            c.play_gem(me.side, q);
-                        }
+                    for q in c.friendly_where(me.side, |m| m.is(Races::QUILBOAR)) {
+                        c.play_gem(me.side, q);
                     }
                 }),
                 listens: ev::ATTACKS,
-                // "After 2 friendly minions attack each combat, this plays a Blood Gem on all
-                // your Quilboar. (2 left!)"
-                shown: Some(|c, sh| vec![2, 2 - c.combat_data(sh.side, sh.card) % 2]),
                 ..E
             },
         ),
@@ -298,7 +299,7 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
             Script {
                 on_attach: Some(|c, me| {
                     give_n(c, me.side, BLOOD_GEM, 3);
-                    gem_bonus(c, me.side, 2, 1);
+                    // The held bonus is computed by gem_stats, not permanent growth.
                 }),
                 ..E
             },
@@ -308,7 +309,7 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
             Script {
                 on_attach: Some(|c, me| {
                     give_n(c, me.side, BLOOD_GEM, 5);
-                    gem_bonus(c, me.side, 3, 3);
+                    // The held bonus is computed by gem_stats, not permanent growth.
                 }),
                 ..E
             },

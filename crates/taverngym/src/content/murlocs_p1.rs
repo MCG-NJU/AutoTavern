@@ -86,7 +86,7 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
                         .and_then(|p| p.hand.iter().find(|h| h.item.as_minion().is_some()))
                         .map(|h| h.hid);
                     if let Some(h) = first {
-                        c.buff(h, 8 * me.g(), 8 * me.g());
+                        c.buff(h, 9 * me.g(), 9 * me.g());
                     }
                 }),
                 listens: ev::SPELL_CAST,
@@ -141,7 +141,7 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
                     }
                     let k = 3 * me.g();
                     for m in c.friendly_where(me.side, |m| m.is(Races::MURLOC)) {
-                        c.buff(m, k, k);
+                        c.buff(m, k, 4 * me.g());
                     }
                     let hand: Vec<EntityId> = c
                         .player_ref(me.side)
@@ -154,7 +154,7 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
                         })
                         .unwrap_or_default();
                     for h in hand {
-                        c.buff(h, k, k);
+                        c.buff(h, k, 4 * me.g());
                     }
                 }),
                 listens: ev::SPELL_CAST,

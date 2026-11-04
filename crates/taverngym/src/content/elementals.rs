@@ -179,11 +179,11 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
                     if matches!(e, Event::SpellCast { side, tavern: true, .. } if *side == me.side)
                     {
                         for _ in 0..me.g() {
-                            tavern_elementals(c, me.side, 4, 3);
+                            tavern_elementals(c, me.side, 3, 3);
                             // Azerite Portrait: friendly Elementals get the stats too.
                             if has_trinket(c, me.side, "BG30_MagicItem_431") {
                                 for t in c.friendly_where(me.side, |m| m.is(Races::ELEMENTAL)) {
-                                    c.buff(t, 4, 3);
+                                    c.buff(t, 3, 3);
                                 }
                             }
                         }
@@ -256,7 +256,7 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
                     for t in
                         c.friendly_where(me.side, |m| m.is(Races::ELEMENTAL) && m.eid != me.eid)
                     {
-                        c.buff(t, 3 * k, 3 * k);
+                        c.buff(t, 4i32.saturating_mul(k), 4i32.saturating_mul(k));
                     }
                 }),
                 on_event: Some(|c, me, e| {
@@ -268,10 +268,10 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
                 }),
                 listens: ev::PLAYED,
                 flags: flag::IMPROVES,
-                // "Start of Combat: Give your other Elementals +3/+3. (Improves after you play
+                // "Start of Combat: Give your other Elementals +4/+4. (Improves after you play
                 // an Elemental!)"
                 shown: Some(|_, sh| {
-                    let k = 3 * (sh.g().saturating_add(sh.counter()));
+                    let k = 4i32.saturating_mul(sh.g().saturating_add(sh.counter()));
                     vec![k, k]
                 }),
                 ..E
@@ -290,7 +290,7 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
                         return;
                     };
                     m.counter += 1;
-                    if m.counter < 4 {
+                    if m.counter < 3 {
                         return;
                     }
                     m.counter = 0;
@@ -299,9 +299,9 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
                     }
                 }),
                 listens: ev::PLAYED,
-                // "After you play 4 Elementals, gain the stats of the highest-Health minion in
-                // the Tavern. (4 left!)"
-                shown: Some(|_, sh| vec![4, (4 - sh.counter()).max(0)]),
+                // "After you play 3 Elementals, gain the stats of the highest-Health minion in
+                // the Tavern. (3 left!)"
+                shown: Some(|_, sh| vec![3, (3 - sh.counter()).max(0)]),
                 ..E
             },
         ),

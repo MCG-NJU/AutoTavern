@@ -168,7 +168,7 @@ fn improved_trinkets_show_their_current_amount() {
     );
     assert_eq!(
         text(&mut g, kibble).as_deref(),
-        Some("Whenever a friendly Beast attacks, give it +9 Attack and permanently improve this.")
+        Some("Whenever a friendly Beast attacks, give it +12 Attack and permanently improve this.")
     );
     assert_eq!(
         text(&mut g, anklet).as_deref(),
@@ -221,7 +221,7 @@ fn health_cost_trinkets_count_down_to_zero() {
     for _ in 0..4 {
         g.apply(0, Action::Refresh).unwrap();
     }
-    assert!(taverngym::content::tapestry_armed(&g.players[0]));
+    assert!(taverngym::content::tapestry_armed(&g.players[0]).is_some());
     assert_eq!(
         text(&mut g, tapestry).as_deref(),
         Some(
@@ -253,6 +253,7 @@ fn typewriter_shows_the_copies_left() {
     let typewriter = give(&mut g, "BG35_MagicItem_931");
     assert_eq!(text(&mut g, typewriter), None);
     g.players[0].gold = 10;
+    g.players[0].hand.clear();
     let slot = g.players[0]
         .shop
         .iter()
@@ -282,7 +283,7 @@ fn this_game_counters_scale_the_shown_amounts() {
     assert_eq!(
         text(&mut g, mallet).as_deref(),
         Some(
-            "At the end of your turn, give your minions +16/+8. (Improved by Golden minions \
+            "At the end of your turn, give your minions +16/+16. (Improved by Golden minions \
              you've played this game!)"
         )
     );
@@ -300,7 +301,7 @@ fn this_game_counters_scale_the_shown_amounts() {
         g.with_recruit(0, |c| end_of_turn(c, me(t)));
     }
     let m = &g.players[0].board[0];
-    assert_eq!((m.atk, m.hp), (1 + 16 + 5, 3 + 8 + 10));
+    assert_eq!((m.atk, m.hp), (1 + 16 + 5, 3 + 16 + 10));
 }
 
 /// Hammer of Twilight: the shown Attack is the aura the minions really have.
@@ -337,7 +338,7 @@ fn tavern_spell_trinkets_show_their_current_extra() {
         c.improve_card(0, heart);
         c.improve_card(0, heart);
         for _ in 0..4 {
-            c.tick_counter(0, heart, 6);
+            c.tick_counter(0, heart, 5);
         }
         c.spell_extra(0)
     });
@@ -345,8 +346,8 @@ fn tavern_spell_trinkets_show_their_current_extra() {
     assert_eq!(
         text(&mut g, heart).as_deref(),
         Some(
-            "Your Tavern spells give an extra +3/+3. After you cast 6 Tavern spells from hand, \
-             improve this. (2 left!)"
+            "Your Tavern spells give an extra +3/+3. After you cast 5 Tavern spells from hand, \
+             improve this. (1 left!)"
         )
     );
 
@@ -395,7 +396,7 @@ fn weighted_gauntlet_shows_the_doubled_amount() {
     assert_eq!(
         text(&mut g, gauntlet).as_deref(),
         Some(
-            "At the end of your turn, give your minions +8/+8. (Doubles at the start of each \
+            "At the end of your turn, give your minions +56/+56. (Doubles at the start of each \
              turn!)"
         )
     );

@@ -1,4 +1,4 @@
-"""TavernGym: a Hearthstone Battlegrounds (36.6.3.253932) solo-mode simulator with a
+"""TavernGym: a Hearthstone Battlegrounds (37.0.2.256589) solo-mode simulator with a
 reinforcement-learning interface.
 
 - `Game`: one eight-player game, every seat driven explicitly.

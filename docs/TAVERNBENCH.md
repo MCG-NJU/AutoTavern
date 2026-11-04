@@ -5,6 +5,11 @@
 TavernBench contains 960 tasks in 40 scenarios across eight categories. The paper evaluates
 all systems on a fixed 368-task subset. All paths below are relative to the repository root.
 
+The paper's dataset and released answers are frozen at **36.6.3**. They are not relabelled
+when TavernGym changes. Scoring the released answers still uses only the supplied labels.
+For historical simulator/tool-use reproduction, use the `v1.0.0` release; the current tool
+harness executes loaded scenes with **37.0.2** rules, so those runs are new experiments.
+
 ## Files and labels
 
 ```text
@@ -41,7 +46,7 @@ dependencies, `pip install ".[bench]"` from the repository root):
 ```bash
 python -m tavernbench.run_openai --set data/eval --model MODEL --out answers/MODEL/answers.jsonl \
     --base-url https://api.example.com/v1 --key-env API_KEY
-python -m tavernbench.report --set data/eval --runs answers --systems MODEL
+python -X utf8 -m tavernbench.report --set data/eval --runs answers --systems MODEL
 ```
 
 `run_claude` uses the Claude Code CLI (installed and signed in separately), `run_jev` the Jev
@@ -54,13 +59,13 @@ From the repository root, run:
 
 ```bash
 cd tavernbench
-python -m tavernbench.report --set data/eval --runs results/eval \
+python -X utf8 -m tavernbench.report --set data/eval --runs results/eval \
     --systems tavernagent,claude-opus-5.5,claude-sonnet-5.5,gpt-6-astra,gpt-6.1-sol,gemini-3.8-flash,grok-4.7,glm-5.3,kimi-k2.6,intern-s2-preview,deepseek-v4.1-flash,jev
 ```
 
 Play is the mean accuracy over the 30 play scenarios; rules covers the ten rule-execution
 scenarios. A single answer file can also be scored per scenario with
-`python -m tavernbench.score --set data/eval --answers results/eval/<system>/answers.jsonl`.
+`python -X utf8 -m tavernbench.score --set data/eval --answers results/eval/<system>/answers.jsonl`.
 
 ## Notes
 
@@ -68,5 +73,5 @@ Every result file has one answer per task, except `results/eval/gemini-3.8-flash
 no answer for `P2-000`; a missing answer counts as wrong, as in the paper.
 The item generators are not part of this release. The tasks were labelled with TavernGym as of
 the paper; the simulator here includes later rule fixes, so recomputing a label with it can
-differ in rare cases.
+differ across patches. The original prompts, labels, states and results remain unchanged.
 

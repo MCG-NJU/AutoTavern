@@ -21,9 +21,8 @@ fn game(seed: u64) -> Game {
     g
 }
 
-/// Printed numbers the client does not count by: Gunpowder Courier's "(6 Gold left!)" next
-/// to its "spend 5 Gold" - the client counts 5.
-const STALE_PRINTED: [&str; 2] = ["BG26_810", "BG26_810_G"];
+/// 37.0.2 corrected the previous printed countdown mismatch.
+const STALE_PRINTED: [&str; 0] = [];
 
 /// A card in its initial state shows exactly its printed numbers: this catches a hook that
 /// returns the wrong count, the wrong order, or wrong base values (golden cards included).
@@ -195,7 +194,7 @@ fn saurfang_and_the_cheese_wheel_show_their_improved_bonus() {
         "Minions in the Tavern have +4/+4. Improves every 4 times you Refresh. (3 left!)"
     );
     assert_eq!(
-        g.players[0].stats.tavern_atk, 4,
+        g.players[0].stats.tavern_trinket_bonus, 4,
         "the text matches the effect"
     );
 }

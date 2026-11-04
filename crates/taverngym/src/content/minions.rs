@@ -838,7 +838,7 @@ fn paradox_played(c: &mut Ctx, me: Me, e: &Event) {
         && *side == me.side
         && (*eid != me.eid || c.magnet_play)
     {
-        c.buff(me.eid, 3 * me.g(), 0);
+        c.buff(me.eid, 0, 2 * me.g());
     }
 }
 

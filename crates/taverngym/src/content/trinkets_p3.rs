@@ -11,21 +11,20 @@ const TAPESTRY: &str = "BG35_MagicItem_152";
 const WHISTLE: &str = "BG35_MagicItem_930"; // Warband Whistle
 const CANDLE: &str = "BG32_MagicItem_366";
 
-fn counter_of(p: &Player, id: &str) -> i32 {
-    p.counters
-        .iter()
-        .find(|x| db().get(x.0).id == id)
-        .map_or(0, |x| x.1)
+fn counter_of(p: &Player, card: CardId) -> i32 {
+    p.counters.iter().find(|x| x.0 == card).map_or(0, |x| x.1)
 }
 
 /// The Eye of Sargeras: the next card you buy is the fourth (costs Health).
 pub fn sargeras_ready(p: &Player) -> bool {
-    p.has_trinket(SARGERAS) && counter_of(p, SARGERAS) == 3
+    p.trinket_effects()
+        .any(|t| t.base() == crate::cardid!(SARGERAS) && counter_of(p, t) == 3)
 }
 
 /// Demonic Tapestry: 4 Refreshes done since its last use.
-pub fn tapestry_armed(p: &Player) -> bool {
-    counter_of(p, TAPESTRY) >= 4
+pub fn tapestry_armed(p: &Player) -> Option<CardId> {
+    p.trinket_effects()
+        .find(|t| t.base() == crate::cardid!(TAPESTRY) && counter_of(p, *t) >= 4)
 }
 
 /// A per-card price rule was used for a purchase.
@@ -40,11 +39,7 @@ pub fn price_rule_used(c: &mut Ctx, side: Side, rule: CardId) {
 /// The trinkets of card `id` `side`'s player owns (a Souvenir Stand copy is a second one).
 fn copies(c: &Ctx, side: Side, id: CardId) -> Vec<CardId> {
     c.player_ref(side).map_or(Vec::new(), |p| {
-        p.trinkets
-            .iter()
-            .copied()
-            .filter(|t| t.base() == id)
-            .collect()
+        p.trinket_effects().filter(|t| t.base() == id).collect()
     })
 }
 
@@ -85,27 +80,26 @@ pub fn player_refresh(c: &mut Ctx, side: Side) {
 /// "Every N Refreshes" counters: the Refresh button only.
 fn after_you_refresh(c: &mut Ctx, side: Side) {
     let Some(p) = c.player_ref(side) else { return };
-    if p.trinkets.is_empty() {
+    if p.trinket_effects().next().is_none() {
         return;
     }
-    let has = |id: &str| p.has_trinket(id);
-    let tapestry = has(TAPESTRY);
+    let tapestries: Vec<_> = p
+        .trinket_effects()
+        .filter(|t| t.base() == crate::cardid!(TAPESTRY))
+        .collect();
     // Souvenir copies each keep their own refresh counter and improvement level.
     let wheels: Vec<CardId> = p
-        .trinkets
-        .iter()
-        .copied()
+        .trinket_effects()
         .filter(|t| t.base() == cid("BG30_MagicItem_879t"))
         .collect();
     for wheel in wheels {
         if c.tick_counter(side, wheel, 4) {
-            tavern_aura(c, side, 2, 2);
             c.improve_card(side, wheel);
+            super::trinkets_p6::sync_held_trinket_auras(c, side);
         }
     }
     // Demonic Tapestry: armed after 4 Refreshes.
-    if tapestry {
-        let t = cid(TAPESTRY);
+    for t in tapestries {
         let n = c.card_data(side, t);
         c.set_card_data(side, t, (n + 1).min(4));
     }
@@ -269,14 +263,13 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
         (
             "BG30_MagicItem_541",
             Script {
-                on_attach: Some(|c, me| tavern_aura(c, me.side, 2, 2)),
+                on_attach: Some(|c, me| super::trinkets_p6::sync_held_trinket_auras(c, me.side)),
                 on_event: Some(|c, me, e| {
                     if matches!(e, Event::HeroDamaged { side, in_combat: false, amount } if *side == me.side && *amount > 0)
                         && c.tick_counter(me.side, me.card, 3)
                     {
-                        tavern_aura(c, me.side, 2, 2);
-                        // The level is only kept for the card text (`shown`).
                         c.improve_card(me.side, me.card);
+                        super::trinkets_p6::sync_held_trinket_auras(c, me.side);
                     }
                 }),
                 listens: ev::HERO_DAMAGED,
@@ -341,7 +334,7 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
         (
             "BG30_MagicItem_879t",
             Script {
-                on_attach: Some(|c, me| tavern_aura(c, me.side, 2, 2)),
+                on_attach: Some(|c, me| super::trinkets_p6::sync_held_trinket_auras(c, me.side)),
                 // "Minions in the Tavern have +2/+2. Improves every 4 times you Refresh.
                 // (4 left!)"
                 shown: Some(|c, sh| shown_tavern_aura(c, sh, 4)),
@@ -571,14 +564,14 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
             Script {
                 on_event: Some(|c, me, e| {
                     if matches!(e, Event::SpellCast { side, target, .. } if *side == me.side && *target != 0)
-                        && c.tick_counter(me.side, me.card, 3)
+                        && c.tick_counter(me.side, me.card, 2)
                     {
                         c.gain_gold(me.side, 1);
                     }
                 }),
                 listens: ev::SPELL_CAST,
-                // "After you cast 3 spells on minions, gain 1 Gold. (3 left!)"
-                shown: Some(|c, sh| vec![3, 1, shown_left(c, sh, 3)]),
+                // "After you cast 2 spells on minions, gain 1 Gold. (2 left!)"
+                shown: Some(|c, sh| vec![2, 1, shown_left(c, sh, 2)]),
                 ..E
             },
         ),

@@ -1059,16 +1059,23 @@ impl<'g> Ctx<'g> {
             String::new()
         };
         let src = self.src;
-        if atk > 0 || hp > 0 {
-            self.mark_tavern_buff(eid);
-        }
+        let in_tavern = if atk > 0 || hp > 0 {
+            self.mark_tavern_buff(eid)
+        } else {
+            false
+        };
+        let held = if in_tavern || (!combat && (atk < 0 || hp < 0)) {
+            self.tavern_aura_of(eid).2
+        } else {
+            0
+        };
         let (got_atk, got_hp);
         if let Some(m) = self.find_any_mut(eid) {
             if script(m.card).is_some_and(|s| s.has_flag(flag::NO_STAT_GAIN)) {
                 return;
             }
             let before = (m.atk, m.max_hp);
-            m.add_stats(atk, hp);
+            m.add_stats_under_tavern_held(atk, hp, held);
             // What the minion really got (nothing past the i32 limit): the listeners hear that (a
             // capped Gem still fed Titanic Guardian).
             got_atk = m.atk.saturating_sub(before.0);
@@ -1563,7 +1570,7 @@ impl<'g> Ctx<'g> {
         // In the Tavern the Tavern's "this game" buffs stay on top of a "set to": the client
         // recomputes them after it (Perfect Vision with +9/+5 on a Tavern minion with +5/+4: set
         // 29/25, shown 34/29).
-        let (ta, th) = self.tavern_aura_of(eid);
+        let (ta, th, held) = self.tavern_aura_of(eid);
         let Some(m) = self.find_any_mut(eid) else {
             return;
         };
@@ -1572,13 +1579,17 @@ impl<'g> Ctx<'g> {
         }
         let atk = atk.saturating_add(m.pbonus_atk).saturating_add(ta);
         let hp = hp.saturating_add(m.pbonus_hp).saturating_add(th);
-        let (da, dh) = (
-            atk.saturating_sub(m.atk).max(0),
-            hp.saturating_sub(m.max_hp).max(0),
-        );
+        let before = (m.atk, m.max_hp);
         m.set_stats(atk, hp);
+        m.tavern_held_atk = 0;
+        m.tavern_held_hp = 0;
+        m.sync_tavern_held(held);
+        let (da, dh) = (
+            m.atk.saturating_sub(before.0).max(0),
+            m.max_hp.saturating_sub(before.1).max(0),
+        );
         if record {
-            m.record(src, crate::state::ModKind::Set, atk, hp);
+            m.record(src, crate::state::ModKind::Set, m.atk, m.max_hp);
         }
         if da > 0 || dh > 0 {
             self.stats_changed(eid, da, dh);
@@ -1705,6 +1716,7 @@ impl<'g> Ctx<'g> {
         let Player {
             stats,
             trinkets,
+            powers,
             board,
             hand,
             shop,
@@ -1713,16 +1725,16 @@ impl<'g> Ctx<'g> {
         } = &mut self.g.players[p];
         f(stats);
         for m in self.boards[side].iter_mut() {
-            apply_bonuses_to(grow, stats, trinkets, *health, false, m);
+            apply_bonuses_to(grow, stats, trinkets, powers, *health, false, m);
         }
         if combat {
             for m in board.iter_mut() {
-                apply_bonuses_to(grow, stats, trinkets, *health, false, m);
+                apply_bonuses_to(grow, stats, trinkets, powers, *health, false, m);
             }
         }
         for h in hand.iter_mut() {
             if let Item::Minion(m) = &mut h.item {
-                apply_bonuses_to(grow, stats, trinkets, *health, false, m);
+                apply_bonuses_to(grow, stats, trinkets, powers, *health, false, m);
             }
         }
         // A minion that was in the Tavern before the counter changed (one offered later is
@@ -1732,7 +1744,7 @@ impl<'g> Ctx<'g> {
         // action).
         for slot in shop.iter_mut() {
             if let Item::Minion(m) = &mut slot.item {
-                apply_bonuses_to(grow, stats, trinkets, *health, true, m);
+                apply_bonuses_to(grow, stats, trinkets, powers, *health, true, m);
             }
         }
         // A "this game" bonus that raised the Amalgam's stats is a rise like any other; so is
@@ -1874,8 +1886,7 @@ impl<'g> Ctx<'g> {
         }
         if let Some(p) = self.player_ref(side) {
             n += p
-                .trinkets
-                .iter()
+                .trinket_effects()
                 .filter(|t| t.base() == crate::cardid!("BG32_MagicItem_367"))
                 .count() as u32;
             n += u32::from(p.has_reward_id(crate::cardid!("BG24_Reward_130")));
@@ -1918,7 +1929,9 @@ impl<'g> Ctx<'g> {
         {
             self.add_combat_data(side, phylactery, 1);
             first = self.player_ref(side).map_or(0, |p| {
-                p.trinkets.iter().filter(|t| t.base() == phylactery).count() as u32
+                p.trinket_effects()
+                    .filter(|t| t.base() == phylactery)
+                    .count() as u32
             });
         }
         for card in cards() {
@@ -2235,7 +2248,7 @@ impl<'g> Ctx<'g> {
         let v = &mut self.cs[side].card_data;
         match v.iter_mut().find(|x| x.0 == card) {
             Some(x) => {
-                x.1 += d;
+                x.1 = x.1.saturating_add(d);
                 x.1
             }
             None => {
@@ -2253,9 +2266,7 @@ impl<'g> Ctx<'g> {
             && let Some(p) = self.player_ref(side)
         {
             let cards: Vec<CardId> = p
-                .trinkets
-                .iter()
-                .copied()
+                .trinket_effects()
                 .filter(|c| script(*c).is_some_and(|s| s.avenge.is_some()))
                 .collect();
             for card in cards {
@@ -2490,7 +2501,17 @@ impl<'g> Ctx<'g> {
             && !self.g.players[p].has_power_id(old)
         {
             crate::content::hero_power_removed(self, side, old);
+            if db().get(old).kind.is_trinket()
+                && let Some(pl) = self.player(side)
+            {
+                pl.cube_sources.retain(|source| *source != old);
+            }
         }
+        if db().get(card).kind.is_trinket() {
+            crate::content::initialize_instance(self, side, card);
+        }
+        crate::content::sync_held_trinket_auras(self, side);
+        self.bump_player_stat(side, |_| {});
         let name = &db().get(card).name;
         let who = self.who(side);
         self.g.log(|| format!("{who} gets Hero Power {name}"));
@@ -2759,11 +2780,20 @@ impl<'g> Ctx<'g> {
             .map_or(0, |x| x.1)
     }
 
+    /// Apply an asymmetric Tavern bonus that expires next turn if not acquired.
+    pub fn add_tavern_turn_bonus(&mut self, side: Side, attack: i32, health: i32) {
+        self.add_turn_data(side, crate::cardid!("BG32_873"), attack);
+        if let Some(p) = self.player(side) {
+            p.tavern_turn_health = p.tavern_turn_health.saturating_add(health);
+        }
+        self.buff_tavern_temp(side, attack, health);
+    }
+
     pub fn add_turn_data(&mut self, side: Side, card: CardId, d: i32) -> i32 {
         let Some(p) = self.player(side) else { return 0 };
         match p.turn_data.iter_mut().find(|x| x.0 == card) {
             Some(x) => {
-                x.1 += d;
+                x.1 = x.1.saturating_add(d);
                 x.1
             }
             None => {
@@ -3712,7 +3742,7 @@ impl<'g> Ctx<'g> {
         // Trinkets: Heart of the Forest (+1/+1, improved), Honeycomb Ring (+1/+1, improved
         // for the turn), Multilayered Shield (+1/+2 per different type, plus the base).
         if let Some(p) = self.player_ref(side)
-            && !p.trinkets.is_empty()
+            && p.trinket_effects().next().is_some()
         {
             static T: std::sync::OnceLock<[CardId; 3]> = std::sync::OnceLock::new();
             let [heart, honey, shield] = *T.get_or_init(|| {
@@ -3724,7 +3754,7 @@ impl<'g> Ctx<'g> {
             });
             // A Souvenir Stand copy is a trinket of its own: it is matched by its card (`base`) and
             // keeps its own level / turn count under its own id.
-            for &t in &p.trinkets {
+            for t in p.trinket_effects() {
                 if t.base() == heart {
                     let k = self.card_level(side, t).saturating_add(1);
                     a = a.saturating_add(k);
@@ -3909,9 +3939,15 @@ impl<'g> Ctx<'g> {
             && self
                 .cast_card
                 .is_some_and(|c| db().get(c).id.starts_with("BG20_GEM"));
-        if from_hand && p.has_trinket("BG30_MagicItem_943") {
-            a = a.saturating_add(6);
-            h = h.saturating_add(6);
+        for trinket in p.trinket_effects() {
+            let (da, dh) = match db().get(trinket).id.as_str() {
+                "BG30_MagicItem_988" => (2, 1),
+                "BG30_MagicItem_988t" => (3, 3),
+                "BG30_MagicItem_943" if from_hand => (6, 6),
+                _ => (0, 0),
+            };
+            a = a.saturating_add(da);
+            h = h.saturating_add(dh);
         }
         (a, h)
     }
@@ -4370,16 +4406,14 @@ impl<'g> Ctx<'g> {
             .any(|c| script(c).is_some_and(|s| crate::script::Hook::Battlecry.in_script(s)));
         if has_bc
             && let Some(p) = self.player_ref(side)
-            && !p.trinkets.is_empty()
+            && p.trinket_effects().next().is_some()
         {
             if dragon {
                 mult += p.trinket_count(crate::cardid!("BG36_MagicItem_215"));
             }
             let drum = crate::cardid!("BG32_MagicItem_416");
             let drums: Vec<CardId> = p
-                .trinkets
-                .iter()
-                .copied()
+                .trinket_effects()
                 .filter(|t| t.base() == drum && self.turn_data(side, *t) == 0)
                 .collect();
             for drum in drums {
@@ -4875,7 +4909,7 @@ fn bonus_ids() -> &'static BonusIds {
                 (d.id("BG36_MidGameEffect_000t29t"), 1, 1, 1),
                 (d.id("BG36_MidGameEffect_000t30"), 3, 3, 2),
                 (d.id("BG36_MidGameEffect_000t30t"), 2, 2, 2),
-                (d.id("BG36_MidGameEffect_000t88"), 3, 3, 3),
+                (d.id("BG36_MidGameEffect_000t88"), 3, 2, 3),
             ],
             hammer: d.id("BG36_MagicItem_403"),
             hammer_g: d.id("BG36_MagicItem_403t"),
@@ -4890,6 +4924,7 @@ pub fn apply_bonuses(cfg: &RulesConfig, p: &Player, m: &mut Minion) {
         cfg.volumizer_attached_grow,
         &p.stats,
         &p.trinkets,
+        &p.powers,
         p.health,
         false,
         m,
@@ -4903,6 +4938,7 @@ pub fn apply_tavern_bonuses(cfg: &RulesConfig, p: &Player, m: &mut Minion) {
         cfg.volumizer_attached_grow,
         &p.stats,
         &p.trinkets,
+        &p.powers,
         p.health,
         true,
         m,
@@ -4916,11 +4952,12 @@ pub fn apply_bonuses_to(
     attached_grow: bool,
     st: &crate::state::PlayerStats,
     trinkets: &[CardId],
+    powers: &[crate::state::HeroPowerState],
     health: i32,
     tavern: bool,
     m: &mut Minion,
 ) {
-    let (atk, hp) = bonus_of(attached_grow, st, trinkets, health, tavern, m);
+    let (atk, hp) = bonus_of(attached_grow, st, trinkets, powers, health, tavern, m);
     let (da, dh) = (
         atk.saturating_sub(m.pbonus_atk),
         hp.saturating_sub(m.pbonus_hp),
@@ -4935,11 +4972,14 @@ pub fn apply_bonuses_to(
 /// The player-level bonus a minion carries (Attack, Health): what `apply_bonuses_to` keeps
 /// it at.
 /// Hammer of Twilight's Attack on a player's minions in play and in hand (`bonus_of`).
-pub fn hammer_attack(st: &crate::state::PlayerStats, trinkets: &[CardId]) -> i32 {
+pub fn hammer_attack(
+    st: &crate::state::PlayerStats,
+    trinkets: &[CardId],
+    powers: &[crate::state::HeroPowerState],
+) -> i32 {
     let ids = bonus_ids();
     let k = 1 + st.cards_discarded;
-    trinkets
-        .iter()
+    crate::state::trinket_effects(trinkets, powers)
         .map(|t| t.base())
         .map(|t| {
             if t == ids.hammer {
@@ -4957,6 +4997,7 @@ fn bonus_of(
     attached_grow: bool,
     st: &crate::state::PlayerStats,
     trinkets: &[CardId],
+    powers: &[crate::state::HeroPowerState],
     health: i32,
     tavern: bool,
     m: &Minion,
@@ -5001,8 +5042,8 @@ fn bonus_of(
         atk += 4 * g * (st.eternal_knight_deaths as i64) + 4 * (st.knight_bonus as i64);
         hp += 2 * g * (st.eternal_knight_deaths as i64) + 2 * (st.knight_bonus as i64);
     } else if normal == ids.paradox_t6 {
-        atk += 3 * g * (st.battlecries_triggered as i64);
-        hp += 3 * g * (st.battlecries_triggered as i64);
+        atk += 4 * g * (st.battlecries_triggered as i64);
+        hp += 4 * g * (st.battlecries_triggered as i64);
     } else if normal == ids.boom_monster {
         // Dr. Boom's Monster: +2/+2 (+4/+4) for each time you've Magnetized this game.
         atk += 2 * g * (st.magnetized as i64);
@@ -5036,9 +5077,9 @@ fn bonus_of(
     }
     // Trinket auras: Hammer of Twilight (improved by each discarded card) on your minions in play
     // and in hand, not on those in the Tavern; Artisanal Urn (Undead +20 Attack) wherever they are.
-    if !trinkets.is_empty() {
+    {
         let k = 1 + (st.cards_discarded as i64);
-        for t in trinkets.iter().map(|t| t.base()) {
+        for t in crate::state::trinket_effects(trinkets, powers).map(|t| t.base()) {
             if t == ids.hammer && !tavern {
                 atk += k;
             } else if t == ids.hammer_g && !tavern {
@@ -5065,6 +5106,7 @@ impl Game {
         let Player {
             stats,
             trinkets,
+            powers,
             board,
             hand,
             shop,
@@ -5083,7 +5125,8 @@ impl Game {
                     .filter_map(|s| s.item.as_minion_mut().map(|m| (m, true))),
             );
         for (m, tavern) in minions {
-            (m.pbonus_atk, m.pbonus_hp) = bonus_of(grow, stats, trinkets, *health, tavern, m);
+            (m.pbonus_atk, m.pbonus_hp) =
+                bonus_of(grow, stats, trinkets, powers, *health, tavern, m);
         }
     }
 

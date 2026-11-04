@@ -161,12 +161,18 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
                     }
                 }),
                 // The picked Pirate boards the ship (it never enters the hand).
-                discover_pick: Some(|c, _side, _source, item| {
-                    if let Item::Minion(pirate) = &item
+                discover_pick: Some(|c, side, _source, item| {
+                    let selected = if let Item::Minion(pirate) = &item
                         && pirate.gift_data < 0
                         && let Some(ship) = c.minion_mut((-pirate.gift_data) as EntityId)
                     {
                         ship.counter = crew_add(ship.counter, pirate.card);
+                        Some(pirate.card)
+                    } else {
+                        None
+                    };
+                    if let Some(card) = selected {
+                        c.emit(Event::Discovered { side, card, hid: 0 });
                     }
                     None
                 }),

@@ -277,8 +277,7 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
                 on_event: Some(|c, me, e| {
                     if matches!(e, Event::Bought { side, .. } if *side == me.side) {
                         let k = 2 * me.g();
-                        c.add_turn_data(me.side, crate::cardid!("BG32_873"), k);
-                        c.buff_tavern_temp(me.side, k, k);
+                        c.add_tavern_turn_bonus(me.side, k, k);
                     }
                 }),
                 listens: ev::BOUGHT,

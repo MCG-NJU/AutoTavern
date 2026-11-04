@@ -6,11 +6,14 @@
 
 <h3 align="center">TavernGym &amp; TavernBench</h3>
 
+<p align="center"><strong>English</strong> · <a href="README.zh-CN.md">简体中文</a></p>
+
 <p align="center">
   A fast simulator and a decision benchmark for Hearthstone Battlegrounds.
 </p>
 
 <p align="center">
+  <a href="https://arxiv.org/abs/2610.33845v1"><img src="https://img.shields.io/badge/arXiv-2610.33845-b31b1b?style=flat-square" alt="Paper on arXiv"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-cb963e?style=flat-square" alt="License: MIT"></a>
   <a href="pyproject.toml"><img src="https://img.shields.io/badge/Python-3.10%2B-3572a5?style=flat-square&amp;logo=python&amp;logoColor=white" alt="Python 3.10 or newer"></a>
   <a href="rust-toolchain.toml"><img src="https://img.shields.io/badge/Rust-1.98-995c3c?style=flat-square&amp;logo=rust&amp;logoColor=white" alt="Rust 1.98"></a>
@@ -34,15 +37,20 @@ judgment against a fixed set of tasks.
 | [TavernGym](docs/TAVERNGYM.md) | [TavernBench](docs/TAVERNBENCH.md) |
 | :--- | :--- |
 | A deterministic simulator for complete eight-player games. | A benchmark for reasoning about game decisions and rules. |
-| 978 game objects from patch 36.6.3, with [content coverage](docs/CONTENT.md). | 960 tasks in 40 scenarios across eight categories. |
+| Game content from patch 37.0.2, with [content coverage](docs/CONTENT.md). | 960 tasks in 40 scenarios across eight categories. |
 | Rust engine, Python bindings, single-seat and batched environments. | Prompts, labels, saved states, model answers, scoring and tool-use evaluation. |
 
-This is the code and data release for *Build, Don't Play: Self-Improving LLM Research Agents
-Develop a Hearthstone Battlegrounds AI That Rivals Top Players*, by Changlian Ma and Limin
-Wang, Nanjing University and Shanghai AI Laboratory.
+This is the code and data release for [*Build, Don't Play: Self-Improving LLM Research Agents
+Develop a Hearthstone Battlegrounds AI That Rivals Top Players*](https://arxiv.org/abs/2610.33845v1),
+by Changlian Ma and Limin Wang, Nanjing University and Shanghai AI Laboratory.
 
 The release includes TavernGym and TavernBench. The trained TavernAgent, its weights and
 training code, and the benchmark item generators are not included.
+
+TavernGym now targets **37.0.2**; see the [patch notes](docs/PATCH_37.0.2.md).
+TavernBench keeps the paper's **36.6.3** tasks, labels, saved states and results unchanged.
+Use the `v1.0.0` release for historical simulator-based reproduction; running the tool-use
+harness with the current engine applies 37.0.2 rules.
 
 ## Quick start
 
@@ -81,7 +89,7 @@ From the repository root:
 
 ```bash
 cd tavernbench
-python -m tavernbench.report --set data/eval --runs results/eval \
+python -X utf8 -m tavernbench.report --set data/eval --runs results/eval \
     --systems tavernagent,gpt-6-astra,claude-opus-5.5,jev
 ```
 
@@ -90,7 +98,7 @@ simulator build, model access or API key is required.
 
 ## TavernGym
 
-TavernGym reproduces solo Battlegrounds for client **36.6.3.253932**, server rules **36.6.3**.
+TavernGym reproduces solo Battlegrounds for client **37.0.2.256589**, server rules **37.0.2**.
 It exposes the player-visible state, an exact legal action mask, and seeded save and restore.
 
 | Interface | Use it for |
@@ -142,7 +150,7 @@ pip install ".[bench]"
 | [TavernBench](docs/TAVERNBENCH.md) | Dataset layout, labels, scoring, model runners, tool use and reproduction notes. |
 | [Architecture](docs/ARCHITECTURE.md) | Engine structure, interfaces and how the components fit together. |
 | [Content coverage](docs/CONTENT.md) | Implemented minions, heroes, spells, trinkets and other game objects. |
-| [Timewarp](docs/TIMEWARP.md) | The Timewarped Tavern (off by default in 36.6.3; two heroes still visit it). |
+| [Timewarp](docs/TIMEWARP.md) | The Timewarped Tavern (off by default in 37.0.2; two heroes still visit it). |
 
 For development, run `pip install -e ".[test]"` and `pytest`. The Rust crate also works on its
 own with `cargo test --release`.
@@ -157,7 +165,10 @@ If you use TavernGym or TavernBench in your research, please cite:
             Battlegrounds {AI} That Rivals Top Players},
   author = {Ma, Changlian and Wang, Limin},
   year   = {2026},
-  url    = {https://github.com/MCG-NJU/AutoTavern}
+  eprint = {2610.33845},
+  archivePrefix = {arXiv},
+  primaryClass = {cs.AI},
+  url    = {https://arxiv.org/abs/2610.33845v1}
 }
 ```
 

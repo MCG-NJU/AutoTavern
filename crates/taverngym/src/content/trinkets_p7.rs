@@ -110,7 +110,7 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
                     };
                     if *side != me.side
                         || db().get(*card).kind != crate::cards::CardKind::Minion
-                        || c.turn_data(me.side, me.card) > 0
+                        || c.turn_data(me.side, me.card) >= 2
                     {
                         return;
                     }
@@ -186,7 +186,7 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
         (
             "BG32_MagicItem_860t",
             Script {
-                avenge: Some((7, 7, |c, me| beetles(c, me.side, 2))),
+                avenge: Some((8, 8, |c, me| beetles(c, me.side, 2))),
                 ..E
             },
         ),
@@ -302,20 +302,20 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
         (
             "BG36_MagicItem_810",
             Script {
-                end_of_turn: Some(|c, me| gyroblade(c, me, 4)),
-                // "At the end of your turn, get a 4/4 Magnetic Satellite. (Improved by each
+                end_of_turn: Some(|c, me| gyroblade(c, me, 6)),
+                // "At the end of your turn, get a 6/6 Magnetic Satellite. (Improved by each
                 // Tavern spell you've cast this turn!)"
-                shown: Some(|c, sh| shown_gyroblade(c, sh, 4)),
+                shown: Some(|c, sh| shown_gyroblade(c, sh, 6)),
                 ..E
             },
         ),
         (
             "BG36_MagicItem_810t",
             Script {
-                end_of_turn: Some(|c, me| gyroblade(c, me, 12)),
-                // "At the end of your turn, get a 12/12 Magnetic Satellite. (Improved by each
+                end_of_turn: Some(|c, me| gyroblade(c, me, 20)),
+                // "At the end of your turn, get a 20/20 Magnetic Satellite. (Improved by each
                 // Tavern spell you've cast this turn!)"
-                shown: Some(|c, sh| shown_gyroblade(c, sh, 12)),
+                shown: Some(|c, sh| shown_gyroblade(c, sh, 20)),
                 ..E
             },
         ),

@@ -148,7 +148,7 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
         (
             "BG33_885",
             Script {
-                rally: Some(|c, me, _| gem_bonus(c, me.side, me.g(), 2 * me.g())),
+                rally: Some(|c, me, _| gem_bonus(c, me.side, me.g(), me.g())),
                 ..E
             },
         ),

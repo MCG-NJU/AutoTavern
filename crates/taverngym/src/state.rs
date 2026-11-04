@@ -83,6 +83,11 @@ pub struct Minion {
     pub tavern_temp_atk: i32,
     #[serde(default)]
     pub tavern_temp_hp: i32,
+    /// Actual held-trinket aura baked into this Tavern entity, after saturation.
+    #[serde(default)]
+    pub tavern_held_atk: i32,
+    #[serde(default)]
+    pub tavern_held_hp: i32,
     pub temp_kw: Kw,
     /// Activate uses this turn.
     pub activations: u8,
@@ -154,6 +159,8 @@ impl Minion {
             temp_hp: 0,
             tavern_temp_atk: 0,
             tavern_temp_hp: 0,
+            tavern_held_atk: 0,
+            tavern_held_hp: 0,
             temp_kw: Kw::NONE,
             activations: 0,
             destroyed: false,
@@ -275,7 +282,28 @@ impl Minion {
         }
     }
 
+    /// Permanent gains take priority over removable held auras at the stat cap.
+    pub(crate) fn add_stats_under_tavern_held(&mut self, atk: i32, hp: i32, bonus: i32) {
+        if bonus > 0 {
+            self.sync_tavern_held(0);
+        }
+        self.add_stats(atk, hp);
+        if bonus > 0 {
+            self.sync_tavern_held(bonus);
+        }
+    }
+
+    pub(crate) fn sync_tavern_held(&mut self, bonus: i32) {
+        self.add_stats(-self.tavern_held_atk, -self.tavern_held_hp);
+        let (a, h) = (self.atk, self.max_hp);
+        self.add_stats(bonus, bonus);
+        self.tavern_held_atk = self.atk.saturating_sub(a);
+        self.tavern_held_hp = self.max_hp.saturating_sub(h);
+    }
+
     pub(crate) fn keep_tavern_buffs(&mut self) {
+        self.tavern_held_atk = 0;
+        self.tavern_held_hp = 0;
         self.temp_atk = self.temp_atk.saturating_sub(self.tavern_temp_atk);
         self.temp_hp = self.temp_hp.saturating_sub(self.tavern_temp_hp);
         self.tavern_temp_atk = 0;
@@ -544,6 +572,9 @@ pub struct PlayerStats {
     pub spell_hp: i32,
     /// Stats for minions in the Tavern (all / Elementals).
     pub tavern_atk: i32,
+    /// Current held Trinket aura, separate from permanent Tavern growth.
+    #[serde(default)]
+    pub tavern_trinket_bonus: i32,
     pub tavern_hp: i32,
     pub tavern_elemental_atk: i32,
     pub tavern_elemental_hp: i32,
@@ -974,6 +1005,9 @@ pub struct Player {
     /// cleared at the start of each turn.
     #[serde(default)]
     pub turn_data: Vec<(CardId, i32)>,
+    /// Health half of the current-turn Tavern bonus; attack is turn_data[BG32_873].
+    #[serde(default)]
+    pub tavern_turn_health: i32,
     /// Turn of the Greater Trinket offer when moved (Ornate Clock; 0 = rules default), and
     /// whether it happened.
     #[serde(default)]
@@ -1100,6 +1134,7 @@ impl Player {
             freezes_this_turn: 0,
             skipping: false,
             turn_data: Vec::new(),
+            tavern_turn_health: 0,
             greater_turn: 0,
             greater_offered: false,
             next_trinket_lesser: false,
@@ -1160,17 +1195,24 @@ impl Player {
         self.rewards.iter().any(|t| db().get(*t).id == id)
     }
     pub fn has_trinket(&self, id: &str) -> bool {
-        self.trinkets.iter().any(|t| db().get(*t).id == id)
+        self.trinket_effects().any(|t| db().get(t).id == id)
+    }
+    /// Effects in the Hero Power slots (Kiri's Eclipse) are still Trinkets. Pure
+    /// display and hook-order code keeps the two physical locations separate.
+    pub fn trinket_effects(&self) -> impl Iterator<Item = CardId> + Clone + '_ {
+        trinket_effects(&self.trinkets, &self.powers)
     }
     /// Resolved-id variants for hot paths (`cardid!`).
     #[inline]
     pub fn has_trinket_id(&self, t: CardId) -> bool {
         // (`base`: Souvenir Stand's copy counts as the trinket.)
-        self.trinkets.iter().any(|x| x.base() == t)
+        self.trinket_effects().any(|x| x.base() == t.base())
     }
     #[inline]
     pub fn trinket_count(&self, t: CardId) -> u32 {
-        self.trinkets.iter().filter(|x| x.base() == t).count() as u32
+        self.trinket_effects()
+            .filter(|x| x.base() == t.base())
+            .count() as u32
     }
     #[inline]
     pub fn has_reward_id(&self, t: CardId) -> bool {
@@ -1222,4 +1264,17 @@ impl Pool {
     pub fn return_minion(&mut self, m: &Minion) {
         m.visit_pool_parts(|c, n| self.put(c, n));
     }
+}
+
+/// Borrow the active trinket sources without allocating or borrowing unrelated state.
+pub fn trinket_effects<'a>(
+    trinkets: &'a [CardId],
+    powers: &'a [HeroPowerState],
+) -> impl Iterator<Item = CardId> + Clone + 'a {
+    trinkets.iter().copied().chain(
+        powers
+            .iter()
+            .map(|p| p.card)
+            .filter(|c| db().get(*c).kind.is_trinket()),
+    )
 }

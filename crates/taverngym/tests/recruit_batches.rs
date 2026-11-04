@@ -185,7 +185,7 @@ fn bought_ashen_stats_persist_but_frozen_tavern_stats_expire() {
             .item
             .as_minion()
             .unwrap();
-        assert_eq!((m.atk, m.max_hp), (base.0 + k, base.1 + k));
+        assert_eq!((m.atk, m.max_hp), (base.0 + k / 2, base.1 + k));
         assert_eq!((m.temp_atk, m.temp_hp), (0, 0));
         g.apply(0, Action::Freeze).unwrap();
         g.start_turn();
@@ -197,7 +197,7 @@ fn bought_ashen_stats_persist_but_frozen_tavern_stats_expire() {
             .item
             .as_minion()
             .unwrap();
-        assert_eq!((m.atk, m.max_hp), (base.0 + k, base.1 + k));
+        assert_eq!((m.atk, m.max_hp), (base.0 + k / 2, base.1 + k));
         let m = g.players[0]
             .shop
             .iter()
@@ -219,7 +219,7 @@ fn a_refreshed_tavern_minion_keeps_the_turn_bonus_when_bought() {
         c.refresh_shop(0);
     });
     let before = g.players[0].shop[0].item.as_minion().unwrap().clone();
-    assert_eq!((before.temp_atk, before.temp_hp), (2, 2));
+    assert_eq!((before.temp_atk, before.temp_hp), (1, 2));
     g.apply(0, Action::Buy(0)).unwrap();
     g.start_turn();
     let m = g.players[0]

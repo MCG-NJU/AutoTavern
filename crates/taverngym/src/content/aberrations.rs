@@ -238,11 +238,11 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
             Script {
                 spell: Some(|c, me, _| {
                     for (t, _) in one_minion_per_type(c, me.side, |_| true) {
-                        spell_buff(c, me, t, 4, 4);
+                        spell_buff(c, me, t, 3, 3);
                     }
                 }),
                 // "Give a friendly minion of each type +4/+4."
-                shown: Some(|c, sh| shown_spell_stats(c, sh, 4, 4)),
+                shown: Some(|c, sh| shown_spell_stats(c, sh, 3, 3)),
                 ..E
             },
         ),

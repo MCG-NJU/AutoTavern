@@ -87,6 +87,8 @@ fn elise_gilds_the_tavern_after_five_refreshes() {
             .count()
     };
     let mut g = game(2);
+    g.universe = vec![cid("BG36_345")];
+    g.pool.put(cid("BG36_345"), 100);
     set_board(&mut g, 0, &[ELISE]);
     g.players[0].gold = 20;
     for _ in 0..4 {
@@ -100,6 +102,8 @@ fn elise_gilds_the_tavern_after_five_refreshes() {
 
     // Golden: the two highest-Tier minions.
     let mut g = game(2);
+    g.universe = vec![cid("BG36_345")];
+    g.pool.put(cid("BG36_345"), 100);
     set_board(&mut g, 0, &["BG34_Giant_038_G"]);
     g.players[0].gold = 20;
     for _ in 0..5 {

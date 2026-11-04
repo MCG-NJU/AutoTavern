@@ -136,14 +136,11 @@ fn each_cheese_wheel_improves_on_four_real_refreshes() {
                 content::grant_trinket(c, 0, cid("BG30_MagicItem_879t").copy());
             }
         });
-        assert_eq!(g.players[0].stats.tavern_atk, 2 * copies);
+        assert_eq!(g.players[0].stats.tavern_trinket_bonus, 2 * copies);
         for _ in 0..4 {
             g.apply(0, Action::Refresh).unwrap();
         }
-        assert_eq!(
-            (g.players[0].stats.tavern_atk, g.players[0].stats.tavern_hp),
-            (4 * copies, 4 * copies)
-        );
+        assert_eq!(g.players[0].stats.tavern_trinket_bonus, 4 * copies);
     }
 }
 

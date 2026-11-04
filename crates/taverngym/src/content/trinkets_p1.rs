@@ -52,7 +52,7 @@ macro_rules! get_one {
 /// Adjust a minion for its owner's Portraits (Bronzebeard Portrait): a freshly created one,
 /// and one that becomes theirs from the Tavern (`Ctx::add_to_hand`).
 pub fn trinket_on_create(p: &crate::state::Player, m: &mut Minion) {
-    if p.trinkets.is_empty() {
+    if p.trinket_effects().next().is_none() {
         return;
     }
     if m.is_card_id(crate::cardid!("BG_LOE_077"))
@@ -208,7 +208,7 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
                 on_attach: Some(|c, me| give_n(c, me.side, "BG32_340", 1)),
                 on_event: Some(|c, me, e| {
                     if !c.combat && died(me, e).is_some() {
-                        c.gain_gold(me.side, 2);
+                        c.gain_gold(me.side, 1);
                     }
                 }),
                 listens: ev::DIED,
@@ -295,7 +295,7 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
                 }),
                 deathrattle: Some(|c, me| {
                     for e in c.friendly(me.side) {
-                        c.buff_perm(me.side, e, 2, 2);
+                        c.buff_perm(me.side, e, 3, 3);
                     }
                 }),
                 ..E

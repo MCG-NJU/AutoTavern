@@ -254,6 +254,7 @@ fn named_text(c: &Ctx, sh: &Shown) -> Option<(String, String)> {
         "BG30_MagicItem_426"
         | "BG30_MagicItem_426t"
         | "BG32_MagicItem_901"
+        | "BG30_MagicItem_973"
         | "BG24_Reward_134"
         | "BG27_Reward_812" => {
             let data =

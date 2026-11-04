@@ -122,12 +122,12 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
                     }
                     let n = c.player_ref(me.side).map_or(0, |p| p.stats.golden_played);
                     let k = me.g() * (1 + n);
-                    for t in c.friendly_where(me.side, |m| m.eid != me.eid && m.is(Races::PIRATE)) {
+                    for t in c.friendly_where(me.side, |m| m.is(Races::PIRATE)) {
                         c.buff(t, k, k);
                     }
                 }),
                 listens: ev::DISCOVERED,
-                // "After you Discover a card, give your other Pirates +1/+1. (Improved by
+                // "After you Discover a card, give your Pirates +1/+1. (Improved by
                 // Golden minions you played this game!)"
                 shown: Some(|c, sh| {
                     let n = c.player_ref(sh.side).map_or(0, |p| p.stats.golden_played);

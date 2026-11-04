@@ -164,7 +164,7 @@ fn living_azerite_grows_the_elementals_in_the_tavern() {
         // The Elemental grows, the minion without a type does not.
         assert_eq!(
             shop_stats(&g),
-            vec![(2 + 4 * times, 1 + 3 * times), (3, 3)],
+            vec![(2 + 3 * times, 1 + 3 * times), (3, 3)],
             "{azerite}"
         );
         // "In the Tavern": not the Elemental on the board (the Azerite itself).
@@ -173,7 +173,7 @@ fn living_azerite_grows_the_elementals_in_the_tavern() {
         cast(&mut g, COIN);
         assert_eq!(
             shop_stats(&g),
-            vec![(2 + 8 * times, 1 + 6 * times), (3, 3)],
+            vec![(2 + 6 * times, 1 + 6 * times), (3, 3)],
             "{azerite}"
         );
     }
@@ -187,13 +187,13 @@ fn living_azerite_bonus_is_on_elementals_that_come_later() {
     set_board(&mut g, 0, &["BG28_707"]);
     cast(&mut g, COIN);
     let st = &g.players[0].stats;
-    assert_eq!((st.tavern_elemental_atk, st.tavern_elemental_hp), (4, 3));
+    assert_eq!((st.tavern_elemental_atk, st.tavern_elemental_hp), (3, 3));
     let mut seen = false;
     for _ in 0..20 {
         g.apply(0, Action::Refresh).unwrap();
         for (races, a, h) in tavern_bonuses(&mut g) {
             let elemental = races.intersects(Races::ELEMENTAL);
-            let want = if elemental { (4, 3) } else { (0, 0) };
+            let want = if elemental { (3, 3) } else { (0, 0) };
             assert_eq!((a, h), want);
             seen |= elemental;
         }
@@ -225,11 +225,11 @@ fn arcane_absorption_gives_half_the_stats_of_the_healthiest_tavern_minion() {
     // "Give a friendly Elemental half the stats of the highest-Health minion in the Tavern."
     let mut g = game(36_122);
     set_board(&mut g, 0, &[CYCLONE, GUARD]);
-    shop(&mut g, &["BG36_851", GUARD]); // Spark Snapper 6/8 (the highest Health), a 3/3
+    shop(&mut g, &["BG36_851", GUARD]); // Spark Snapper 8/8 (the highest Health), a 3/3
     cast_at(&mut g, ABSORPTION, 0);
-    assert_eq!(stats(&g, 0), vec![(2 + 3, 1 + 4), (3, 3)]);
+    assert_eq!(stats(&g, 0), vec![(2 + 4, 1 + 4), (3, 3)]);
     // Nothing is taken from the Tavern.
-    assert_eq!(shop_stats(&g), vec![(6, 8), (3, 3)]);
+    assert_eq!(shop_stats(&g), vec![(8, 8), (3, 3)]);
 }
 
 // ---------------------------------------------------------------------------- 2-3, 7. Demons
@@ -267,8 +267,8 @@ fn devilish_distractor_spell_on_it_buffs_the_tavern_for_the_game() {
 
 #[test]
 fn ashen_corruptor_rewinds_hero_damage_and_buffs_the_tavern() {
-    // "After your hero takes damage, rewind it and give minions in the Tavern +2/+2 this
-    // turn." Golden: "... +4/+4 this turn."
+    // "After your hero takes damage, rewind it and give minions in the Tavern +1/+2 this
+    // turn." Golden: "... +2/+4 this turn."
     for (corruptor, k) in [("BG32_873", 2), ("BG32_873_G", 4)] {
         let mut g = game(36_210);
         set_board(&mut g, 0, &[corruptor, WRATH_WEAVER]);
@@ -282,7 +282,7 @@ fn ashen_corruptor_rewinds_hero_damage_and_buffs_the_tavern() {
         assert_eq!(life(&g), before, "{corruptor}: the damage is rewound");
         assert_eq!(
             shop_stats(&g),
-            vec![(2 + k, 1 + k), (3 + k, 3 + k)],
+            vec![(2 + k / 2, 1 + k), (3 + k / 2, 3 + k)],
             "{corruptor}"
         );
     }
@@ -290,13 +290,13 @@ fn ashen_corruptor_rewinds_hero_damage_and_buffs_the_tavern() {
 
 #[test]
 fn ashen_corruptor_tavern_buff_is_gone_next_turn() {
-    // "... +2/+2 this turn": a minion kept in the Tavern by a Freeze has lost it next turn.
+    // "... +1/+2 this turn": a minion kept in the Tavern by a Freeze has lost it next turn.
     let mut g = game(36_211);
     set_board(&mut g, 0, &["BG32_873", WRATH_WEAVER]);
     shop(&mut g, &[CYCLONE, GUARD]);
     give(&mut g, 0, WRATH_WEAVER);
     play_last(&mut g, 0);
-    assert_eq!(shop_stats(&g), vec![(2 + 2, 1 + 2), (3 + 2, 3 + 2)]);
+    assert_eq!(shop_stats(&g), vec![(2 + 1, 1 + 2), (3 + 1, 3 + 2)]);
     let kept: Vec<_> = g.players[0].shop.iter().map(|s| s.sid).collect();
     g.apply(0, Action::Freeze).unwrap();
     end_turn_all(&mut g);
@@ -505,9 +505,9 @@ fn misplaced_tea_set_buffs_one_minion_of_each_type() {
     // Two Beasts: one of them.
     let mut beasts = [s[0], s[1]];
     beasts.sort();
-    assert_eq!(beasts, [(1, 4), (1 + 4, 4 + 4)]);
-    assert_eq!(s[2], (1 + 4, 3 + 4), "the Demon");
-    assert_eq!(s[3], (1 + 4, 1 + 4), "the Undead");
+    assert_eq!(beasts, [(1, 4), (1 + 3, 4 + 3)]);
+    assert_eq!(s[2], (1 + 3, 3 + 3), "the Demon");
+    assert_eq!(s[3], (1 + 3, 1 + 3), "the Undead");
     assert_eq!(s[4], (3, 3), "no type");
 }
 
@@ -531,8 +531,8 @@ fn gatekeeper_amalgam_casts_a_tea_set_when_a_spell_is_cast_on_it() {
         assert_eq!(
             stats(&g, 0),
             vec![
-                (before[0].0 + 2 + 4 * sets, before[0].1 + 2 + 4 * sets),
-                (1 + 4 * sets, 3 + 4 * sets),
+                (before[0].0 + 2 + 3 * sets, before[0].1 + 2 + 3 * sets),
+                (1 + 3 * sets, 3 + 3 * sets),
                 (3 + 2, 3 + 2),
             ],
             "{amalgam}"
@@ -573,8 +573,8 @@ fn balinda_makes_the_amalgam_cast_its_tea_set_for_every_cast() {
         assert_eq!(
             stats(&g, 0),
             vec![
-                (6 + (2 + 4) * times, 6 + (2 + 4) * times),
-                (1 + 4 * times, 3 + 4 * times),
+                (6 + (2 + 3) * times, 6 + (2 + 3) * times),
+                (1 + 3 * times, 3 + 3 * times),
                 before[2], // Balinda has no type
             ],
             "{balinda}"
@@ -645,14 +645,14 @@ fn spark_snapper_magnetizes_a_satellite_to_a_played_mech_and_improves() {
         give(&mut g, 0, RESCUE_BOT);
         play_last(&mut g, 0);
         let m = &g.players[0].board[2];
-        assert_eq!((m.atk, m.hp), (2 + 2 * k, 1 + 3 * k), "{snapper}");
+        assert_eq!((m.atk, m.hp), (2 + 2 * k, 1 + 2 * k), "{snapper}");
         assert_eq!(m.attached.len(), 1, "{snapper}");
         assert_eq!(db().get(m.attached[0]).name, "Satellite", "{snapper}");
         // Improved: the next Satellite is one printed amount larger.
         give(&mut g, 0, RESCUE_BOT);
         play_last(&mut g, 0);
         let m = &g.players[0].board[3];
-        assert_eq!((m.atk, m.hp), (2 + 4 * k, 1 + 6 * k), "{snapper}");
+        assert_eq!((m.atk, m.hp), (2 + 4 * k, 1 + 4 * k), "{snapper}");
         // The Snapper itself gets nothing.
         assert_eq!(stats(&g, 0)[0], own, "{snapper}");
     }

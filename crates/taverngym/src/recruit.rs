@@ -151,9 +151,9 @@ impl Ctx<'_> {
 
     /// The Tavern's "this game" buffs `m` has while it is in `side`'s Tavern: the client's
     /// BG_ShopBuff_Ench, which it recomputes after a "set to" (`Ctx::set_stats`).
-    pub(crate) fn tavern_aura_of(&self, eid: EntityId) -> (i32, i32) {
+    pub(crate) fn tavern_aura_of(&self, eid: EntityId) -> (i32, i32, i32) {
         if self.combat {
-            return (0, 0);
+            return (0, 0, 0);
         }
         for s in 0..2 {
             let Some(p) = self.owner[s] else { continue };
@@ -164,10 +164,11 @@ impl Ctx<'_> {
                 .find(|x| x.sid == eid)
                 .and_then(|x| x.item.as_minion())
             {
-                return tavern_aura(&pl.stats, m);
+                let (a, h) = permanent_tavern_aura(&pl.stats, m);
+                return (a, h, pl.stats.tavern_trinket_bonus);
             }
         }
-        (0, 0)
+        (0, 0, 0)
     }
 
     pub fn apply_tavern_buffs(&self, side: Side, m: &mut Minion) {
@@ -177,6 +178,7 @@ impl Ctx<'_> {
             crate::engine::apply_tavern_bonuses(&self.g.cfg, p, m);
             let (a, h) = tavern_aura(&p.stats, m);
             m.add_stats(a, h);
+            m.sync_tavern_held(p.stats.tavern_trinket_bonus);
             if self.g.cfg.record_log && (a != 0 || h != 0) {
                 m.record(None, crate::state::ModKind::Tavern, a, h);
             }
@@ -185,8 +187,8 @@ impl Ctx<'_> {
             // the next turn if still in the Tavern. Acquisition fixes the current bonus.
             let ashen = crate::cardid!("BG32_873");
             let k = p.turn_data.iter().find(|x| x.0 == ashen).map_or(0, |x| x.1);
-            if k > 0 {
-                m.add_temp_stats(k, k, true);
+            if k > 0 || p.tavern_turn_health > 0 {
+                m.add_temp_stats(k, p.tavern_turn_health, true);
             }
         }
     }
@@ -283,10 +285,13 @@ impl Ctx<'_> {
         race: Races,
     ) -> Option<EntityId> {
         let p = self.owner[side]?;
+        // A depleted type must not evict a normal offer. Draw first and return the
+        // reserved copy if every slot is frozen or already supplied by an effect.
+        let m = self.draw_pool_minion(side, min_tier, max_tier, race)?;
         if !self.shop_make_room(side) {
+            self.g.pool.return_minion(&m);
             return None;
         }
-        let m = self.draw_pool_minion(side, min_tier, max_tier, race)?;
         let sid = m.eid;
         self.g.players[p]
             .shop
@@ -404,11 +409,12 @@ impl Ctx<'_> {
             self.g.players[p].stats.tavern_buffed = true;
         }
         let (record, src) = (self.g.cfg.record_log, self.src);
+        let held = self.g.players[p].stats.tavern_trinket_bonus;
         for s in self.g.players[p].shop.iter_mut() {
             if let Item::Minion(m) = &mut s.item
                 && (race.is_none() || m.races.intersects(race))
             {
-                m.add_stats(atk, hp);
+                m.add_stats_under_tavern_held(atk, hp, held);
                 if record {
                     m.record(src, crate::state::ModKind::Add, atk, hp);
                 }
@@ -562,9 +568,8 @@ impl Ctx<'_> {
         let n = self.g.players[p].fodder_queue.remove(0);
         let pl = &self.g.players[p];
         let bonus = pl
-            .trinkets
-            .iter()
-            .map(|t| match db().get(*t).id.as_str() {
+            .trinket_effects()
+            .map(|t| match db().get(t).id.as_str() {
                 "BG35_MagicItem_151" => 4,
                 "BG35_MagicItem_151t" => 15,
                 _ => 0,
@@ -1498,9 +1503,7 @@ impl Game {
         let health = script(card).is_some_and(|x| x.has_flag(flag::HEALTH_COST));
         let has = |id: CardId| pl.has_trinket_id(id);
         let unused = |id: CardId, limit: i32| {
-            pl.trinkets
-                .iter()
-                .copied()
+            pl.trinket_effects()
                 .find(|t| t.base() == id && used(*t) < limit)
         };
         match &s.item {
@@ -1536,9 +1539,7 @@ impl Game {
                 }
                 // Demonic Tapestry (armed after 4 Refreshes): the highest-Tier Tavern minion
                 // costs Health.
-                let tapestry = crate::cardid!("BG35_MagicItem_152");
-                if has(tapestry)
-                    && crate::content::tapestry_armed(pl)
+                if let Some(tapestry) = crate::content::tapestry_armed(pl)
                     && pl
                         .shop
                         .iter()
@@ -2327,7 +2328,7 @@ impl Game {
             let Some(Pending::Trinket {
                 options,
                 free: false,
-                replace: None,
+                replace,
             }) = pl.pending.last()
             else {
                 return;
@@ -2335,15 +2336,24 @@ impl Game {
             if options.iter().any(|t| self.trinket_price(p, *t) <= pl.gold) {
                 return;
             }
+            let regular = replace.is_none();
             let pl = &mut self.players[p];
             pl.pending.pop();
-            pl.trinket_pivots = pl.trinket_pivot_stack.pop().unwrap_or_default();
+            if regular {
+                pl.trinket_pivots = pl.trinket_pivot_stack.pop().unwrap_or_default();
+            }
             self.log(|| format!("p{p}: no affordable trinket, offer skipped"));
         }
     }
 
     fn take_trinket(&mut self, p: PlayerId, t: CardId, free: bool, replace: Option<CardId>) {
-        let cost = if free { 0 } else { self.trinket_price(p, t) };
+        let cost = if free {
+            0
+        } else if replace.is_some() {
+            db().get(t).cost
+        } else {
+            self.regular_trinket_price(p, t)
+        };
         // The discounts belong to the regular offer: a free or replacement choice opened on
         // top of it leaves them alone. A paid offer waiting underneath gets its own back.
         if !free && replace.is_none() {
@@ -2355,18 +2365,24 @@ impl Game {
             let name = &db().get(t).name;
             ctx.g.log(|| format!("p{p} buys trinket {name}"));
             match replace {
+                Some(old) if crate::content::is_eclipse(old) => {
+                    crate::content::resolve_eclipse(ctx, 0, old, t)
+                }
                 Some(old) => crate::content::replace_trinket(ctx, 0, old, t),
                 None => crate::content::grant_trinket(ctx, 0, t),
             }
-            // Souvenir Stand: when you buy a Greater Trinket, it becomes a copy of it -- a second
-            // trinket with its own counters, whose "when you get it" effect happens again.
+            // Souvenir Stand: when you buy a Greater Trinket, it becomes a copy of it -- a
+            // second trinket with its own counters, whose "when you get it" effect happens
+            // again (ruling 2026-10-03).
             if db().get(t).kind == CardKind::TrinketGreater {
-                let stand = db().id("BG30_MagicItem_888");
-                if ctx
+                let stands: Vec<_> = ctx
                     .player_ref(0)
-                    .is_some_and(|pl| pl.trinkets.contains(&stand))
-                {
-                    crate::content::replace_trinket(ctx, 0, stand, t.copy());
+                    .into_iter()
+                    .flat_map(|pl| pl.trinket_effects())
+                    .filter(|card| card.base() == crate::cardid!("BG30_MagicItem_888"))
+                    .collect();
+                for stand in stands {
+                    crate::content::replace_trinket(ctx, 0, stand, t);
                 }
             }
             ctx.resolve_deaths();
@@ -2613,7 +2629,9 @@ pub fn magnetize_onto(ctx: &mut Ctx, side: Side, host: EntityId, m: Minion) {
     // Annoy-o-Module with +46/+23 from a Greater Hammer added 20/39, its Health part included).
     let hammer = ctx
         .player_ref(side)
-        .map_or(0, |p| crate::engine::hammer_attack(&p.stats, &p.trinkets))
+        .map_or(0, |p| {
+            crate::engine::hammer_attack(&p.stats, &p.trinkets, &p.powers)
+        })
         .min(m.pbonus_atk.max(0));
     let (a, h) = if grows {
         (m.atk - m.pbonus_atk - ta, m.max_hp - m.pbonus_hp - th)
@@ -2813,6 +2831,16 @@ pub fn give_linked_pair(ctx: &mut Ctx, side: Side, a: CardId, b: CardId) {
 
 /// The Tavern's "this game" stats for `m` (all Tavern minions, Elementals, a minion type).
 pub(crate) fn tavern_aura(st: &crate::state::PlayerStats, m: &Minion) -> (i32, i32) {
+    let (a, h) = permanent_tavern_aura(st, m);
+    (
+        a.saturating_add(m.tavern_held_atk),
+        h.saturating_add(m.tavern_held_hp),
+    )
+}
+
+// Keep the permanent contribution separate: subtracting a held contribution
+// from a saturated total would incorrectly discard permanent stats at i32::MAX.
+fn permanent_tavern_aura(st: &crate::state::PlayerStats, m: &Minion) -> (i32, i32) {
     let (mut a, mut h) = (st.tavern_atk, st.tavern_hp);
     if m.races.intersects(Races::ELEMENTAL) {
         a = a.saturating_add(st.tavern_elemental_atk);

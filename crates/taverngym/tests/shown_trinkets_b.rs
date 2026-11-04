@@ -86,15 +86,15 @@ fn trinket_upgrades_count_down() {
     assert_eq!(
         shown(&mut g, staff).as_deref(),
         Some(
-            "After 13 friendly minions attack, replace this with a random Greater Dragon \
-             Trinket. (8 left!)"
+            "After 11 friendly minions attack, replace this with a random Greater Dragon \
+             Trinket. (6 left!)"
         )
     );
     assert_eq!(
         shown(&mut g, hook).as_deref(),
         Some(
-            "After you spend 50 Gold, replace this with a random Greater Pirate Trinket. \
-             (30 Gold left!)"
+            "After you spend 40 Gold, replace this with a random Greater Pirate Trinket. \
+             (20 Gold left!)"
         )
     );
 }
@@ -144,14 +144,14 @@ fn gyroblade_shows_the_satellite_it_will_give() {
     assert_eq!(
         shown(&mut g, blade).as_deref(),
         Some(
-            "At the end of your turn, get a 12/12 Magnetic Satellite. (Improved by each Tavern \
+            "At the end of your turn, get a 18/18 Magnetic Satellite. (Improved by each Tavern \
              spell you've cast this turn!)"
         )
     );
     assert_eq!(
         shown(&mut g, big).as_deref(),
         Some(
-            "At the end of your turn, get a 36/36 Magnetic Satellite. (Improved by each Tavern \
+            "At the end of your turn, get a 60/60 Magnetic Satellite. (Improved by each Tavern \
              spell you've cast this turn!)"
         )
     );
@@ -164,7 +164,7 @@ fn gyroblade_shows_the_satellite_it_will_give() {
         .iter()
         .filter_map(|h| h.item.as_minion().map(|m| (m.atk, m.max_hp)))
         .collect();
-    assert_eq!(got, vec![(12, 12), (36, 36)]);
+    assert_eq!(got, vec![(18, 18), (60, 60)]);
 }
 
 #[test]
@@ -211,13 +211,7 @@ fn per_turn_and_per_combat_counters() {
             defender: 0,
         });
         c.combat = false;
-        assert_eq!(
-            shown_in(c, jar).as_deref(),
-            Some(
-                "After 2 friendly minions attack each combat, this plays a Blood Gem on all \
-                 your Quilboar. (1 left!)"
-            )
-        );
+        assert_eq!(shown_in(c, jar), None, "Jar has no countdown in 37.0.2");
         // Writhing Tentacles: the first minion discarded this turn.
         let m = c.new_minion(0, cid(PRISONGUARD));
         taverngym::content::writhing_tentacles(c, 0, &m);

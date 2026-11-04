@@ -154,8 +154,8 @@ pub enum Event {
         side: Side,
         attacker: EntityId,
     },
-    /// A Discover choice resolved (the card went to hand, or waits for hand space). `hid` is
-    /// the hand id it has or was promised (0: none).
+    /// A real Discover resolved. `hid` is the actual or promised hand id, or 0 when
+    /// the card goes elsewhere (e.g. Nellie's ship crew). Virtual choice menus do not emit it.
     Discovered {
         side: Side,
         card: CardId,

@@ -122,7 +122,7 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
                     if matches!(e, Event::Played { side, .. } if *side == me.side)
                         && let Some(h) = leftmost_in_hand(c, me.side)
                     {
-                        c.buff(h, 3, 3);
+                        c.buff(h, 5, 5);
                     }
                 }),
                 listens: ev::PLAYED,
@@ -136,7 +136,7 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
                     if matches!(e, Event::Played { side, .. } if *side == me.side)
                         && let Some(h) = leftmost_in_hand(c, me.side)
                     {
-                        c.buff(h, 6, 6);
+                        c.buff(h, 10, 10);
                     }
                 }),
                 listens: ev::PLAYED,
@@ -163,7 +163,7 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
                 on_event: Some(|c, me, e| {
                     if matches!(e, Event::GoldSpent { side, amount } if *side == me.side && *amount > 0)
                     {
-                        buff_random_of(c, me.side, Races::PIRATE, 2, 6, 6);
+                        buff_random_of(c, me.side, Races::PIRATE, 2, 8, 8);
                     }
                 }),
                 listens: ev::GOLD_SPENT,
@@ -225,15 +225,18 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
                         && *side == me.side
                         && c.minion(*attacker).is_some_and(|m| m.is(Races::BEAST))
                     {
-                        let k = 3 * (1 + c.card_level(me.side, me.card));
+                        let k = 4i32
+                            .saturating_mul(1i32.saturating_add(c.card_level(me.side, me.card)));
                         c.buff(*attacker, k, 0);
                         c.improve_card(me.side, me.card);
                     }
                 }),
                 listens: ev::ATTACKS,
-                // "Whenever a friendly Beast attacks, give it +3 Attack and permanently improve
+                // "Whenever a friendly Beast attacks, give it +4 Attack and permanently improve
                 // this."
-                shown: Some(|c, sh| vec![3 * (1 + c.card_level(sh.side, sh.card))]),
+                shown: Some(|c, sh| {
+                    vec![4i32.saturating_mul(1i32.saturating_add(c.card_level(sh.side, sh.card)))]
+                }),
                 ..E
             },
         ),
@@ -284,17 +287,17 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
                 on_event: Some(|c, me, e| {
                     if tavern_spell_cast(me, e)
                         && c.cast_from_hand
-                        && c.tick_counter(me.side, me.card, 6)
+                        && c.tick_counter(me.side, me.card, 5)
                     {
                         c.improve_card(me.side, me.card);
                     }
                 }),
                 listens: ev::SPELL_CAST,
-                // "Your Tavern spells give an extra +1/+1. After you cast 6 Tavern spells from
-                // hand, improve this. (6 left!)"
+                // "Your Tavern spells give an extra +1/+1. After you cast 5 Tavern spells from
+                // hand, improve this. (5 left!)"
                 shown: Some(|c, sh| {
                     let k = 1 + c.card_level(sh.side, sh.card);
-                    vec![k, k, 6, shown_left(c, sh, 6)]
+                    vec![k, k, 5, shown_left(c, sh, 5)]
                 }),
                 ..E
             },
@@ -353,7 +356,7 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
                 on_event: Some(|c, me, e| {
                     if tavern_spell_cast(me, e) {
                         for p in friendly_of(c, me.side, Races::PIRATE) {
-                            c.buff(p, 3, 3);
+                            c.buff(p, 4, 4);
                         }
                     }
                 }),
@@ -371,7 +374,7 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
                         && c.find_any(*hid).is_some_and(|m| m.is(Races::PIRATE))
                         && let Some(l) = c.leftmost(me.side)
                     {
-                        c.buff(l, 16, 16);
+                        c.buff(l, 20, 20);
                     }
                 }),
                 listens: ev::CARD_ADDED,
@@ -387,7 +390,7 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
                         && *side == me.side
                         && c.minion(*eid).is_some_and(|m| m.is(Races::BEAST))
                     {
-                        c.buff(*eid, 6, 6);
+                        c.buff(*eid, 7, 7);
                     }
                 }),
                 listens: ev::SUMMONED,
@@ -470,10 +473,10 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
         (
             "BG36_MagicItem_302t",
             Script {
-                end_of_turn: Some(|c, me| gold_mallet(c, me, 4, 2)),
-                // "At the end of your turn, give your minions +4/+2. (Improved by Golden minions
+                end_of_turn: Some(|c, me| gold_mallet(c, me, 4, 4)),
+                // "At the end of your turn, give your minions +4/+4. (Improved by Golden minions
                 // you've played this game!)"
-                shown: Some(|c, sh| shown_gold_mallet(c, sh, 4, 2)),
+                shown: Some(|c, sh| shown_gold_mallet(c, sh, 4, 4)),
                 ..E
             },
         ),
@@ -544,21 +547,21 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
         (
             "BG36_MagicItem_414",
             Script {
-                on_attach: Some(|c, me| c.set_card_data(me.side, me.card, 1)),
+                on_attach: Some(|c, me| c.set_card_data(me.side, me.card, 7)),
                 start_of_turn: Some(|c, me| {
-                    let x = c.card_data(me.side, me.card).max(1);
+                    let x = c.card_data(me.side, me.card).max(7);
                     c.set_card_data(me.side, me.card, x.saturating_mul(2));
                 }),
                 end_of_turn: Some(|c, me| {
-                    let x = c.card_data(me.side, me.card).max(1);
+                    let x = c.card_data(me.side, me.card).max(7);
                     for e in c.friendly(me.side) {
                         c.buff(e, x, x);
                     }
                 }),
-                // "At the end of your turn, give your minions +1/+1. (Doubles at the start of each
+                // "At the end of your turn, give your minions +7/+7. (Doubles at the start of each
                 // turn!)"
                 shown: Some(|c, sh| {
-                    let x = c.card_data(sh.side, sh.card).max(1);
+                    let x = c.card_data(sh.side, sh.card).max(7);
                     vec![x, x]
                 }),
                 ..E

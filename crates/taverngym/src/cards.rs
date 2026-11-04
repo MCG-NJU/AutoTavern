@@ -66,17 +66,32 @@ impl CardId {
     /// a trinket the player already owns. It has the same card data and script (`db().get`
     /// and `script` ignore the mark) but is a different key for per-card counters.
     pub const COPY: u16 = 0x8000;
+    /// The table has fewer than 4096 definitions. Four high bits distinguish up to
+    /// sixteen owned instances (Eclipse, Souvenir Stand, Cubes), without changing
+    /// the historic first-copy bit or any unmarked card index.
+    pub const INSTANCE_MASK: u16 = 0xf000;
+    pub const BASE_MASK: u16 = !Self::INSTANCE_MASK;
+    pub const INSTANCES: u16 = 16;
+    pub fn instance(self, ordinal: u16) -> CardId {
+        assert!(ordinal < Self::INSTANCES);
+        let mark = (ordinal >> 1) | ((ordinal & 1) << 3);
+        CardId(self.base().0 | (mark << 12))
+    }
+    pub fn instance_ordinal(self) -> u16 {
+        let mark = self.0 >> 12;
+        ((mark & 7) << 1) | (mark >> 3)
+    }
     pub fn copy(self) -> CardId {
         CardId(self.0 | Self::COPY)
     }
     /// The card itself, without the copy mark.
     pub fn base(self) -> CardId {
-        CardId(self.0 & !Self::COPY)
+        CardId(self.0 & Self::BASE_MASK)
     }
     /// Index into per-card tables.
     #[inline]
     pub fn idx(self) -> usize {
-        (self.0 & !Self::COPY) as usize
+        (self.0 & Self::BASE_MASK) as usize
     }
 }
 
@@ -287,6 +302,10 @@ pub fn db() -> &'static CardDb {
 impl CardDb {
     fn parse(json: &str) -> CardDb {
         let raw: RawDb = serde_json::from_str(json).expect("cards.json parses");
+        assert!(
+            raw.cards.len() <= CardId::BASE_MASK as usize + 1,
+            "card table exceeds the reviewed CardId instance layout"
+        );
         let mut by_id = FxMap::with_capacity_and_hasher(raw.cards.len(), Default::default());
         for (i, c) in raw.cards.iter().enumerate() {
             by_id.insert(c.id.clone(), CardId(i as u16));
@@ -447,12 +466,12 @@ mod tests {
     }
 
     #[test]
-    fn pool_counts_match_bundle() {
+    fn pool_counts_match_current_ruleset() {
         let d = db();
         assert_eq!(d.iter().filter(|c| c.pools.minion).count(), 245);
         assert_eq!(d.iter().filter(|c| c.pools.hero).count(), 116);
         assert_eq!(d.iter().filter(|c| c.pools.spell).count(), 70);
-        assert_eq!(d.iter().filter(|c| c.pools.trinket).count(), 236);
+        assert_eq!(d.iter().filter(|c| c.pools.trinket).count(), 234);
     }
 
     #[test]

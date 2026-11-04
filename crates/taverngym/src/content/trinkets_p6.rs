@@ -1,6 +1,6 @@
-//! Trinkets: trinkets that give, copy or replace trinkets, and change the trinket offers.
-//! `grant_trinket` / `replace_trinket` run the new trinket's immediate effect as if it was bought;
-//! replacement offers are `Pending::Trinket { replace: Some(..) }` (declinable).
+//! Trinkets, P4-6: trinkets that give, copy or replace trinkets, and change the trinket
+//! offers. `grant_trinket` / `replace_trinket` run the new trinket's immediate effect as if it
+//! was bought; replacement offers are `Pending::Trinket { replace: Some(..) }` (declinable).
 
 use super::*;
 use crate::cards::CardKind;
@@ -8,12 +8,24 @@ use crate::cards::CardKind;
 /// The key trinket `t` is kept under: a second one of a trinket the player already has (two
 /// Mystery Cubes that both turned into it) is a copy (`CardId::copy`) with its own counters,
 /// like Souvenir Stand's. `old` is the trinket it replaces (not another one).
-fn instance_key(p: &crate::state::Player, t: CardId, old: Option<CardId>) -> CardId {
-    let taken = |k: CardId| p.trinkets.iter().any(|x| *x == k && Some(*x) != old);
-    if taken(t) && !taken(t.copy()) {
-        t.copy()
-    } else {
-        t
+pub(super) fn instance_key(p: &crate::state::Player, t: CardId, old: Option<CardId>) -> CardId {
+    (0..CardId::INSTANCES)
+        .map(|n| t.instance(n))
+        .find(|k| !p.trinket_effects().any(|x| x == *k && Some(x) != old))
+        .expect("owned trinkets and powers fit in sixteen instance keys")
+}
+
+/// Fresh acquisition resets instance state, even when a former Cube used the same key.
+pub(crate) fn initialize_instance(c: &mut Ctx, side: Side, card: CardId) {
+    let bait = card.base() == crate::cardid!("BG30_MagicItem_973");
+    let race = bait.then(|| c.card_data(side, card.base()));
+    if let Some(p) = c.player(side) {
+        p.counters.retain(|x| x.0 != card);
+        p.levels.retain(|x| x.0 != card);
+        p.turn_data.retain(|x| x.0 != card);
+    }
+    if let Some(race) = race.filter(|r| *r != 0) {
+        c.set_card_data(side, card, race);
     }
 }
 
@@ -22,11 +34,30 @@ pub fn grant_trinket(c: &mut Ctx, side: Side, t: CardId) {
     let Some(p) = c.player(side) else { return };
     let t = instance_key(p, t, None);
     p.trinkets.push(t);
+    initialize_instance(c, side, t);
     attach(c, side, t);
+    sync_held_trinket_auras(c, side);
+    c.bump_player_stat(side, |_| {});
 }
 
 /// Replace trinket `old` (same position; appended if it is gone) with `t`.
 pub fn replace_trinket(c: &mut Ctx, side: Side, old: CardId, t: CardId) {
+    let power_slot = c
+        .player_ref(side)
+        .and_then(|p| p.powers.iter().position(|power| power.card == old));
+    if let Some(slot) = power_slot {
+        let Some(p) = c.player_ref(side) else { return };
+        let t = instance_key(p, t, Some(old));
+        if let Some(p) = c.player(side) {
+            for source in &mut p.cube_sources {
+                if *source == old {
+                    *source = t;
+                }
+            }
+        }
+        c.set_hero_power(side, slot, t);
+        return;
+    }
     let Some(p) = c.player(side) else { return };
     let t = instance_key(p, t, Some(old));
     // Each acquired Cube keeps its own current replacement, including repeated Cubes.
@@ -38,9 +69,122 @@ pub fn replace_trinket(c: &mut Ctx, side: Side, old: CardId, t: CardId) {
         None => p.trinkets.push(t),
     }
     let (from, to) = (&db().get(old).name, &db().get(t).name);
+    initialize_instance(c, side, t);
     let who = c.who(side);
     c.g.log(|| format!("{who}'s {from} becomes {to}"));
     attach(c, side, t);
+    sync_held_trinket_auras(c, side);
+    c.bump_player_stat(side, |_| {});
+}
+
+/// Recompute held auras separately from permanent "this game" totals, so removal
+/// cannot subtract from a different effect after the permanent total saturates.
+pub fn held_tavern_bonus(p: &crate::state::Player) -> i32 {
+    p.trinket_effects()
+        .map(|card| match db().get(card).id.as_str() {
+            "BG30_MagicItem_841" => 3,
+            "BG30_MagicItem_541" | "BG30_MagicItem_879t" => p
+                .levels
+                .iter()
+                .find(|x| x.0 == card)
+                .map_or(0, |x| x.1)
+                .saturating_add(1)
+                .saturating_mul(2),
+            _ => 0,
+        })
+        .fold(0i32, i32::saturating_add)
+}
+
+pub fn sync_held_trinket_auras(c: &mut Ctx, side: Side) {
+    let Some(p) = c.player_ref(side) else { return };
+    let bonus = held_tavern_bonus(p);
+    let changed = bonus != p.stats.tavern_trinket_bonus;
+    let portrait = p.has_trinket_id(crate::cardid!("BG30_MagicItem_418"));
+    let sync_races = |m: &mut Minion| {
+        if !m.is_card_id(crate::cardid!("BG_LOE_077")) || m.races == Races::ALL {
+            return;
+        }
+        let extra = Races::MURLOC.0 | Races::DRAGON.0;
+        m.races = if portrait {
+            Races(m.races.0 | extra)
+        } else {
+            Races(m.races.0 & !extra)
+        };
+    };
+    if let Some(p) = c.player(side) {
+        p.stats.tavern_trinket_bonus = bonus;
+        for m in p
+            .board
+            .iter_mut()
+            .chain(p.hand.iter_mut().filter_map(|h| h.item.as_minion_mut()))
+        {
+            sync_races(m);
+        }
+    }
+    for m in &mut c.boards[side] {
+        sync_races(m);
+    }
+    if changed && let Some(p) = c.player(side) {
+        if bonus > 0 {
+            p.stats.tavern_buffed = true;
+        }
+        for slot in &mut p.shop {
+            if let Some(m) = slot.item.as_minion_mut() {
+                m.sync_tavern_held(bonus);
+            }
+        }
+    }
+}
+
+pub fn is_eclipse(card: CardId) -> bool {
+    matches!(
+        db().get(card).id.as_str(),
+        "BG36_MagicItem_412" | "BG36_MagicItem_412t2"
+    )
+}
+
+fn eclipse_offer(c: &mut Ctx, me: Me, kind: CardKind) {
+    let Some(p) = c.owner[me.side] else { return };
+    let gold = c.g.players[p].gold;
+    let source = if is_eclipse(me.card) {
+        me.card
+    } else {
+        let base = cid(if kind == CardKind::TrinketLesser {
+            "BG36_MagicItem_412"
+        } else {
+            "BG36_MagicItem_412t2"
+        });
+        c.g.players[p]
+            .trinket_effects()
+            .find(|t| t.base() == base)
+            .unwrap_or(base)
+    };
+    let candidates = c.board_home(me.side, |c| {
+        eligible(c, me.side, kind, |d| d.cost <= 4 && d.cost <= gold)
+    });
+    let options: Vec<_> =
+        c.g.rng
+            .sample_indices(candidates.len(), c.g.cfg.trinket_choices)
+            .into_iter()
+            .map(|i| candidates[i])
+            .collect();
+    if !options.is_empty() {
+        super::trinkets_3702::prepare_options(c, me.side, &options);
+        c.g.players[p].pending.push(Pending::Trinket {
+            options,
+            free: false,
+            replace: Some(source),
+        });
+    }
+}
+
+/// The purchase is paid once. Each replacement initializes its own immediate effect.
+pub fn resolve_eclipse(c: &mut Ctx, side: Side, old: CardId, selected: CardId) {
+    replace_trinket(c, side, old, selected);
+    storm_replaced(c, side, 0);
+    let Some(p) = c.player_ref(side) else { return };
+    let key = instance_key(p, selected, p.powers.first().map(|h| h.card));
+    c.set_hero_power(side, 0, key);
 }
 
 fn attach(c: &mut Ctx, side: Side, t: CardId) {
@@ -82,11 +226,12 @@ fn eligible(
 
 const CUBE: &str = "BG30_MagicItem_703";
 
-/// Lesser Trinkets Mystery Cube does not offer: itself; a trinket that acts on other trinkets
-/// (gives one, turns into one, changes the next offer); one that counts toward something or grows
-/// over time; one whose benefit only comes turns later. A trinket that gives something now and
-/// again every few turns (Tickatus Sticker, Conch Portrait) or every turn (Goblin Wallet) is
-/// offered.
+/// Lesser Trinkets Mystery Cube does not offer (rulings 2026-10-09, 2026-10-10 and the
+/// re-check of all 114 Lesser Trinkets on 2026-10-11): itself; a trinket that acts on other
+/// trinkets (gives one, turns into one, changes the next offer); one that counts toward
+/// something or grows over time; one whose benefit only comes turns later. A trinket that
+/// gives something now and again every few turns (Tickatus Sticker, Conch Portrait) or every
+/// turn (Goblin Wallet) is offered.
 const CUBE_EXCLUDED: [&str; 25] = [
     "BG30_MagicItem_703", // Mystery Cube
     // Other trinkets.
@@ -95,21 +240,21 @@ const CUBE_EXCLUDED: [&str; 25] = [
     "BG30_MagicItem_888", // Souvenir Stand: becomes a copy of the Greater Trinket you buy
     "BG32_MagicItem_271", // Ornate Clock: next turn's Greater Trinket
     "BG30_MagicItem_891", // Trip Vouchers: in 2 turns, a Greater Trinket
-    "BG36_MagicItem_407", // Dragonhead Staff: replaced after 13 attacks
-    "BG36_MagicItem_408", // Quartermaster's Hook: replaced after 50 Gold
+    "BG36_MagicItem_407", // Dragonhead Staff: replaced after 11 attacks
+    "BG36_MagicItem_408", // Quartermaster's Hook: replaced after 40 Gold
     "BG36_MagicItem_409", // Ruby Tusk: replaced after 10 Blood Gems
     "BG36_MagicItem_410", // Soul Battery: replaced after 25 summons
     "BG36_MagicItem_411", // Reinvigorating Light: Discover a second Hero Power
     // Counts toward something, or grows.
     "BG30_MagicItem_713", // Bleeding Heart: after 8 friendly minions die
-    "BG30_MagicItem_931", // Lucky Kitty: after 7 friendly minions die
-    "BG35_MagicItem_302", // Stormcoil Sticker: after 6 friendly minions die
+    "BG30_MagicItem_931", // Lucky Kitty: after 6 friendly minions die
+    "BG35_MagicItem_302", // Stormcoil Sticker: after 5 friendly minions die
     "BG32_MagicItem_808", // Bloodbound Earrings: after you cast 4 spells
-    "BG36_MagicItem_307", // Wand of Divination: after you cast 3 spells on minions
+    "BG36_MagicItem_307", // Wand of Divination: after you cast 2 spells on minions
     "BG35_MagicItem_152", // Demonic Tapestry: after you Refresh 4 times
     "BG36_MagicItem_302", // Gold Mallet: improved by Golden minions played
     "BG36_MagicItem_403", // Hammer of Twilight: improved by discards
-    "BG36_MagicItem_414", // Weighted Gauntlet: doubles each turn
+    "BG36_MagicItem_412", // Kiri's Eclipse: replaces this and the Hero Power
     // Pays off turns later.
     "BG32_MagicItem_428", // Worn Treasure Map: in two turns, 10 Gold
     "BG36_MagicItem_301", // Lockbox Portrait: a Lockbox that opens turns later
@@ -118,10 +263,10 @@ const CUBE_EXCLUDED: [&str; 25] = [
     "BG35_MagicItem_814", // Bulging Wallet: when you reach Tier 6
 ];
 
-/// Mystery Cube at the start of a turn: the trinket it became is replaced again -- choose from 2
-/// new Lesser Trinkets, every turn (like Ethereal Evidence). This runs after the start of turn
-/// effects, so the trinket being replaced still acts this turn and the new one's "when you get it"
-/// effect follows.
+/// Mystery Cube at the start of a turn: the trinket it became is replaced again -- choose
+/// from 2 new Lesser Trinkets, every turn (ruling 2026-10-09, like Ethereal Evidence). This
+/// runs after the start of turn effects, so the trinket being replaced still acts this turn
+/// and the new one's "when you get it" effect follows.
 pub fn cube_turn_start(c: &mut Ctx, side: Side) {
     let cube = cid(CUBE);
     // Migrate old saves that only kept a single Cube pointer.
@@ -133,7 +278,8 @@ pub fn cube_turn_start(c: &mut Ctx, side: Side) {
         p.cube_sources.push(CardId((legacy - 1) as u16));
     }
     let Some(p) = c.player(side) else { return };
-    p.cube_sources.retain(|cur| p.trinkets.contains(cur));
+    p.cube_sources
+        .retain(|cur| p.trinkets.contains(cur) || p.powers.iter().any(|h| h.card == *cur));
     let sources = p.cube_sources.clone();
     for cur in sources {
         offer_swap(c, side, cur, CardKind::TrinketLesser, 2, true);
@@ -157,6 +303,7 @@ fn offer_swap(c: &mut Ctx, side: Side, old: CardId, kind: CardKind, n: usize, fr
     let picks = c.g.rng.sample_indices(cands.len(), n);
     let options: Vec<CardId> = picks.into_iter().map(|i| cands[i]).collect();
     if !options.is_empty() {
+        super::trinkets_3702::prepare_options(c, side, &options);
         c.g.players[p].pending.push(Pending::Trinket {
             options,
             free,
@@ -169,7 +316,7 @@ fn offer_swap(c: &mut Ctx, side: Side, old: CardId, kind: CardKind, n: usize, fr
 /// trinkets; any such trinket if none is available there).
 fn upgrade_to_greater(c: &mut Ctx, me: Me, r: Races) {
     // Earned in combat (Dragonhead Staff's attacks, Soul Battery's summons): the trinket is
-    // replaced at the start of the next turn; the level marks it.
+    // replaced at the start of the next turn (ruling 2026-10-03); the level marks it.
     if c.combat {
         if c.card_level(me.side, me.card) == 0 {
             c.improve_card(me.side, me.card);
@@ -192,8 +339,8 @@ fn upgrade_to_greater(c: &mut Ctx, me: Me, r: Races) {
             .collect();
     }
     if let Some(&t) = c.g.rng.pick(&cands) {
-        // The mark and the count go with the trinket: the same one got again later starts from
-        // nothing.
+        // The mark and the count go with the trinket: the same one got again later starts
+        // from nothing (it used to be replaced at once by the old mark).
         if let Some(p) = c.player(me.side) {
             p.levels.retain(|x| x.0 != me.card);
             p.counters.retain(|x| x.0 != me.card);
@@ -204,17 +351,45 @@ fn upgrade_to_greater(c: &mut Ctx, me: Me, r: Races) {
 
 use crate::state::Pending;
 
-/// `Script::shown` of a player-level "After N...: X. (N left!)" card that counts in its card data
-/// (`Ctx::tick_counter`, `gold_counter`): the goal, then what is left.
+/// `Script::shown` of a player-level "After N ...: X. (N left!)" card that counts in its card
+/// data (`Ctx::tick_counter`, `gold_counter`): the goal, then what is left.
 pub(super) fn shown_left(c: &Ctx, sh: &crate::script::Shown, every: i32) -> Vec<i32> {
     vec![every, (every - c.card_data(sh.side, sh.card)).max(0)]
 }
 
 pub fn scripts() -> Vec<(&'static str, Script)> {
     vec![
-        // Mystery Cube: choose from 2 new Lesser Trinkets to replace this for free (the swap can't
-        // be declined); at the start of each turn what it became is replaced again
-        // (`cube_turn_start`).
+        (
+            "BG36_MagicItem_412",
+            Script {
+                on_attach: Some(|c, me| eclipse_offer(c, me, CardKind::TrinketLesser)),
+                ..E
+            },
+        ),
+        (
+            "BG36_MagicItem_412t2",
+            Script {
+                on_attach: Some(|c, me| eclipse_offer(c, me, CardKind::TrinketGreater)),
+                ..E
+            },
+        ),
+        (
+            "BG36_MagicItem_412t",
+            Script {
+                spell: Some(|c, me, _| eclipse_offer(c, me, CardKind::TrinketLesser)),
+                ..E
+            },
+        ),
+        (
+            "BG36_MagicItem_412t3",
+            Script {
+                spell: Some(|c, me, _| eclipse_offer(c, me, CardKind::TrinketGreater)),
+                ..E
+            },
+        ),
+        // Mystery Cube: choose from 2 new Lesser Trinkets to replace this for free (the swap
+        // can't be declined: ruling 2026-10-03); at the start of each turn what it became is
+        // replaced again (`cube_turn_start`).
         (
             "BG30_MagicItem_703",
             Script {
@@ -312,7 +487,7 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
             Script {
                 on_event: Some(|c, me, e| {
                     if matches!(e, Event::Attacks { side, .. } if *side == me.side)
-                        && c.tick_counter(me.side, me.card, 13)
+                        && c.tick_counter(me.side, me.card, 11)
                     {
                         upgrade_to_greater(c, me, Races::DRAGON);
                     }
@@ -323,13 +498,13 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
                         upgrade_to_greater(c, me, Races::DRAGON);
                     }
                 }),
-                // "After 13 friendly minions attack, replace this with a random Greater Dragon
-                // Trinket. (13 left!)"
+                // "After 11 friendly minions attack, replace this with a random Greater Dragon
+                // Trinket. (11 left!)"
                 shown: Some(|c, sh| {
                     if c.card_level(sh.side, sh.card) > 0 {
-                        vec![13, 0]
+                        vec![11, 0]
                     } else {
-                        shown_left(c, sh, 13)
+                        shown_left(c, sh, 11)
                     }
                 }),
                 ..E
@@ -340,14 +515,14 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
             "BG36_MagicItem_408",
             Script {
                 on_event: Some(|c, me, e| {
-                    gold_counter(c, me, e, 50, |c, me| {
+                    gold_counter(c, me, e, 40, |c, me| {
                         upgrade_to_greater(c, me, Races::PIRATE)
                     })
                 }),
                 listens: ev::GOLD_SPENT,
-                // "After you spend 50 Gold, replace this with a random Greater Pirate Trinket.
-                // (50 Gold left!)"
-                shown: Some(|c, sh| shown_left(c, sh, 50)),
+                // "After you spend 40 Gold, replace this with a random Greater Pirate Trinket.
+                // (40 Gold left!)"
+                shown: Some(|c, sh| shown_left(c, sh, 40)),
                 ..E
             },
         ),

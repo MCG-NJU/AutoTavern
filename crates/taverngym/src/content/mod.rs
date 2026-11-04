@@ -48,6 +48,7 @@ mod pirates_p1;
 mod quests;
 mod secrets;
 pub mod starcraft;
+mod trinkets_3702;
 mod trinkets_p1;
 mod trinkets_p2;
 mod trinkets_p3;
@@ -62,10 +63,15 @@ pub use quests::{
     ENDLESS_REWARDS, buddy_pool, check_total_attack, discover_buddy, draw_quest_types,
     on_stats_gained, quest_goal, quest_offerable, reward_weight,
 };
+pub(crate) use trinkets_3702::prepare_options as prepare_trinket_options;
 pub use trinkets_p1::trinket_on_create;
 pub use trinkets_p2::aurum_gold_check;
 pub use trinkets_p3::{player_refresh, price_rule_used, sargeras_ready, tapestry_armed};
-pub use trinkets_p6::{cube_turn_start, grant_trinket, replace_trinket};
+pub(crate) use trinkets_p6::initialize_instance;
+pub use trinkets_p6::{
+    cube_turn_start, grant_trinket, held_tavern_bonus, is_eclipse, replace_trinket,
+    resolve_eclipse, sync_held_trinket_auras,
+};
 pub use trinkets_p8::writhing_tentacles;
 pub use yogg::wheel_of_yogg;
 pub mod helpful;
@@ -171,6 +177,7 @@ pub fn all_scripts() -> Vec<(&'static str, Script)> {
     v.extend(trinkets_p6::scripts());
     v.extend(trinkets_p7::scripts());
     v.extend(trinkets_p8::scripts());
+    v.extend(trinkets_3702::scripts());
     v.extend(darkmoon::scripts());
     v.extend(secrets::scripts());
     v.extend(starcraft::scripts());

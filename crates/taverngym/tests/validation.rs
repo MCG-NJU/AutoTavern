@@ -204,9 +204,7 @@ fn t21_temporary_bans_are_in_no_pool() {
         "BG34_Giant_585",
         "BG34_Giant_585_G",
         "BGS_121",
-        "BG30_MagicItem_973",
-        "BG36_MagicItem_412",
-        "BG36_MagicItem_412t2",
+        "BG32_MagicItem_300",
     ] {
         let p = db().get(cid(id)).pools;
         assert!(!p.minion && !p.tier7 && !p.trinket && !p.timewarp, "{id}");
@@ -216,7 +214,7 @@ fn t21_temporary_bans_are_in_no_pool() {
     g.turn = 9;
     for _ in 0..50 {
         for t in g.trinket_offer(0, CardKind::TrinketGreater) {
-            assert!(!db().get(t).id.starts_with("BG36_MagicItem_412"));
+            assert!(db().get(t).id != "BG32_MagicItem_300");
         }
     }
 }
@@ -480,6 +478,12 @@ fn timewarp_system_is_off_but_morchie_and_murozond_visit() {
         let mut g = game(860);
         g.cfg.content = taverngym::config::ContentMode::AllVanilla;
         g.cfg.timewarp_enabled = enabled;
+        g.cfg.lesser_trinket_turn = 50;
+        g.cfg.greater_trinket_turn = 51;
+        for p in &mut g.players {
+            p.health = 1000;
+            p.board.clear();
+        }
         if let Some(hp) = power {
             g.set_hero_power(0, 0, cid(hp));
         }
@@ -542,6 +546,12 @@ fn timewarped_investment_saves_a_chronum_for_the_major_timewarp() {
         (0..300).any(|seed| {
             let mut g = game(880 + seed);
             g.cfg.timewarp_enabled = enabled;
+            g.cfg.lesser_trinket_turn = 50;
+            g.cfg.greater_trinket_turn = 51;
+            for p in &mut g.players {
+                p.health = 1000;
+                p.board.clear();
+            }
             g.with_recruit(0, |c| timewarp::offer(c, 0, major))
                 .iter()
                 .any(|o| o.0.card() == coin)

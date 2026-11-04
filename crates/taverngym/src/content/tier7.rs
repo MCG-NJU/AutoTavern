@@ -63,8 +63,8 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
         (
             "BG27_016",
             Script {
-                battlecry: Some(|c, me, _| tavern_this_game(c, me.side, 8 * me.g(), 8 * me.g())),
-                deathrattle: Some(|c, me| tavern_this_game(c, me.side, 8 * me.g(), 8 * me.g())),
+                battlecry: Some(|c, me, _| tavern_this_game(c, me.side, 12 * me.g(), 12 * me.g())),
+                deathrattle: Some(|c, me| tavern_this_game(c, me.side, 12 * me.g(), 12 * me.g())),
                 ..E
             },
         ),
@@ -178,12 +178,26 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
             "BG34_320",
             Script {
                 rally: Some(|c, me, _| {
-                    // One pick; the golden gives the same minions +30/+30.
-                    {
-                        for (t, _) in one_minion_per_type(c, me.side, |_| true) {
-                            c.buff_perm(me.side, t, 15 * me.g(), 15 * me.g());
+                    let targets = one_minion_per_type(c, me.side, |_| true);
+                    for _ in 0..me.g() {
+                        let n = c.minion(me.eid).map_or(0, |m| m.counter);
+                        let amount = n.saturating_add(1).saturating_mul(10);
+                        for &(t, _) in &targets {
+                            c.buff_perm(me.side, t, amount, amount);
+                        }
+                        if c.combat {
+                            if let Some(m) = c.minion_mut(me.eid) {
+                                m.counter = m.counter.saturating_add(1);
+                            }
+                        } else {
+                            c.counter_perm(me.side, me.eid, 1);
                         }
                     }
+                }),
+                flags: flag::IMPROVES,
+                shown: Some(|_, sh| {
+                    let amount = sh.counter().saturating_add(1).saturating_mul(10);
+                    vec![amount, amount]
                 }),
                 ..E
             },
@@ -210,7 +224,11 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
                     if let Some(m) = c.minion_mut(me.eid) {
                         m.counter += 1;
                     }
-                    c.buff(*eid, a.saturating_mul(me.g()), h.saturating_mul(me.g()));
+                    c.buff(
+                        *eid,
+                        a.saturating_mul(me.g() + 1),
+                        h.saturating_mul(me.g() + 1),
+                    );
                 }),
                 listens: ev::SUMMONED,
                 ..E

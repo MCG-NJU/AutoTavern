@@ -198,10 +198,10 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
         (
             "BG28_845",
             Script {
-                // "Choose a minion. Give all minions that share a type with it +2/+1." The
+                // "Choose a minion. Give all minions that share a type with it +2/+2." The
                 // client offers only minions with a type (a typeless Balinda is never a
                 // target).
-                shown: Some(|c, sh| shown_spell_stats(c, sh, 2, 1)),
+                shown: Some(|c, sh| shown_spell_stats(c, sh, 2, 2)),
                 ..target_spell(TargetSpec::AnyTyped, |c, me, t| {
                     // Every type it has: aimed at an Amalgam, every minion with a type shares one
                     // with it (Gatekeeper Amalgam; it was narrowed to one random type like "its
@@ -226,7 +226,7 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
                         );
                     }
                     for x in all {
-                        spell_buff(c, me, x, 2, 1);
+                        spell_buff(c, me, x, 2, 2);
                     }
                 })
             },

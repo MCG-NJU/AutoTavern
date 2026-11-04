@@ -44,7 +44,7 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
                 on_event: Some(|c, me, e| {
                     if matches!(e, Event::Refreshed { side, .. } if *side == me.side) {
                         for t in c.tavern_minions(me.side) {
-                            c.buff_temp(t, 3, 3);
+                            c.buff_temp(t, 2, 2);
                         }
                     }
                 }),
@@ -142,7 +142,7 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
         (
             "BG30_MagicItem_998",
             Script {
-                on_attach: Some(|c, me| c.gain_gold(me.side, 2)),
+                on_attach: Some(|c, me| c.gain_gold(me.side, 3)),
                 ..E
             },
         ),
@@ -181,11 +181,7 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
             "BG30_MagicItem_841",
             Script {
                 on_attach: Some(|c, me| {
-                    if let Some(p) = c.player(me.side) {
-                        p.stats.tavern_atk = p.stats.tavern_atk.saturating_add(3);
-                        p.stats.tavern_hp = p.stats.tavern_hp.saturating_add(3);
-                    }
-                    c.buff_tavern(me.side, 3, 3, Races::NONE);
+                    super::trinkets_p6::sync_held_trinket_auras(c, me.side);
                 }),
                 ..E
             },
@@ -198,7 +194,7 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
                     if let Event::Upgraded { side, tier: 6 } = e
                         && *side == me.side
                     {
-                        c.gain_gold(me.side, 12);
+                        c.gain_gold(me.side, 14);
                     }
                 }),
                 listens: ev::UPGRADED,

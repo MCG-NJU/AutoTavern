@@ -249,11 +249,11 @@ fn wrathguard_shows_its_improved_buff_and_keeps_the_activate_cost() {
     }
     assert_eq!(
         board_text(&mut g, 0),
-        txt("Deathrattle: Give minions in the Tavern +4/+4 this game. Activate (1): Improve this.")
+        txt("Deathrattle: Give minions in the Tavern +4/+2 this game. Activate (1): Improve this.")
     );
     assert_eq!(
         board_text(&mut g, 1),
-        txt("Deathrattle: Give minions in the Tavern +8/+8 this game. Activate (1): Improve this.")
+        txt("Deathrattle: Give minions in the Tavern +8/+4 this game. Activate (1): Improve this.")
     );
 }
 
@@ -267,7 +267,7 @@ fn escapist_and_revenant_show_what_is_left() {
     });
     assert_eq!(
         board_text(&mut g, 0),
-        txt("After your hero takes 4 damage, get a copy of Corrupted Cupcakes. (1 left!)")
+        txt("After your hero takes 5 damage, get a copy of Corrupted Cupcakes. (2 left!)")
     );
     assert_eq!(
         board_text(&mut g, 1),
@@ -275,12 +275,12 @@ fn escapist_and_revenant_show_what_is_left() {
     );
     // Past the threshold the remainder carries over.
     g.with_recruit(0, |c| {
-        c.hero_damage(0, 2);
+        c.hero_damage(0, 3);
         c.spend_gold(0, 10);
     });
     assert_eq!(
         board_text(&mut g, 0),
-        txt("After your hero takes 4 damage, get a copy of Corrupted Cupcakes. (3 left!)")
+        txt("After your hero takes 5 damage, get a copy of Corrupted Cupcakes. (4 left!)")
     );
     assert_eq!(
         board_text(&mut g, 1),
@@ -326,15 +326,15 @@ fn elementals_show_their_improvements() {
     assert_eq!(
         board_text(&mut g, 0),
         txt(
-            "Start of Combat: Give your other Elementals +6/+6. (Improves after you play an \
+            "Start of Combat: Give your other Elementals +8/+8. (Improves after you play an \
              Elemental!)"
         )
     );
     assert_eq!(
         board_text(&mut g, 1),
         txt(
-            "After you play 4 Elementals, gain the stats of the highest- Health minion in the \
-             Tavern. (3 left!)"
+            "After you play 3 Elementals, gain the stats of the highest- Health minion in the \
+             Tavern. (2 left!)"
         )
     );
     // Conflagration: improved by the Elemental played this turn, plus the Tavern-spell bonus.
@@ -379,7 +379,7 @@ fn tavern_spells_show_the_spell_bonus() {
     );
     assert_eq!(
         card_text(&mut g, "BG28_888"),
-        txt("Give a friendly minion of each type +7/+6.")
+        txt("Give a friendly minion of each type +6/+5.")
     );
 }
 
@@ -392,11 +392,11 @@ fn mechs_show_their_progress() {
     play_last(&mut g);
     assert_eq!(
         board_text(&mut g, 0),
-        txt("Whenever you play a Mech, Magnetize a 4/6 Satellite to it and improve this.")
+        txt("Whenever you play a Mech, Magnetize a 4/4 Satellite to it and improve this.")
     );
     assert_eq!(
         board_text(&mut g, 1),
-        txt("Whenever you play a Mech, Magnetize a 8/12 Satellite to it and improve this.")
+        txt("Whenever you play a Mech, Magnetize a 8/8 Satellite to it and improve this.")
     );
     g.with_recruit(0, |c| {
         c.emit(Event::Bought {

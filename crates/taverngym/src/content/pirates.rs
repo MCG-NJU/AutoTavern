@@ -34,9 +34,9 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
                     for _ in 0..me.g() {
                         for t in c.friendly(me.side) {
                             if c.minion(t).is_some_and(|m| m.golden) {
-                                c.buff_perm(me.side, t, 6, 6);
+                                c.buff_perm(me.side, t, 8, 8);
                             } else {
-                                c.buff(t, 6, 6);
+                                c.buff(t, 8, 8);
                             }
                         }
                     }
@@ -50,12 +50,12 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
             "BG36_523",
             Script {
                 on_event: Some(|c, me, e| {
-                    gold_counter(c, me, e, 6, |c, me| lockbox_or_hasten(c, me.side, me.g()))
+                    gold_counter(c, me, e, 5, |c, me| lockbox_or_hasten(c, me.side, me.g()))
                 }),
                 listens: ev::GOLD_SPENT,
-                // "After you spend 6 Gold, get a Lockbox. If you already have one, it opens 1
-                // turns sooner instead. (6 Gold left!)"
-                shown: Some(|_, sh| vec![6, sh.g(), (6 - sh.counter()).max(0)]),
+                // "After you spend 5 Gold, get a Lockbox. If you already have one, it opens 1
+                // turns sooner instead. (5 Gold left!)"
+                shown: Some(|_, sh| vec![5, sh.g(), (5 - sh.counter()).max(0)]),
                 ..E
             },
         ),

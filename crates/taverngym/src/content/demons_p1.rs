@@ -120,9 +120,7 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
                 on_event: Some(|c, me, e| {
                     if hero_hit(me, e).is_some() {
                         c.rewind_hero_damage(me.side);
-                        let k = 2 * me.g();
-                        c.add_turn_data(me.side, crate::cardid!("BG32_873"), k);
-                        c.buff_tavern_temp(me.side, k, k);
+                        c.add_tavern_turn_bonus(me.side, me.g(), 2 * me.g());
                     }
                 }),
                 listens: ev::HERO_DAMAGED,
@@ -141,8 +139,8 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
                         Some(m) => m.counter,
                         None => c.dead_record(me.side, me.eid).map_or(0, |d| d.counter),
                     };
-                    let k = 2 * (me.g() + n);
-                    tavern_this_game(c, me.side, k, k);
+                    let k = me.g().saturating_add(n);
+                    tavern_this_game(c, me.side, 2i32.saturating_mul(k), k);
                 }),
                 activate: Some((1, TargetSpec::None, |c, me, _| {
                     if let Some(m) = c.minion_mut(me.eid) {
@@ -150,11 +148,11 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
                     }
                 })),
                 flags: flag::IMPROVES,
-                // "Deathrattle: Give minions in the Tavern +2/+2 this game. Activate (1):
+                // "Deathrattle: Give minions in the Tavern +2/+1 this game. Activate (1):
                 // Improve this."
                 shown: Some(|_, sh| {
-                    let k = 2 * (sh.g().saturating_add(sh.counter()));
-                    vec![k, k, 1]
+                    let k = sh.g().saturating_add(sh.counter());
+                    vec![2i32.saturating_mul(k), k, 1]
                 }),
                 ..E
             },
@@ -218,16 +216,16 @@ pub fn scripts() -> Vec<(&'static str, Script)> {
                 on_event: Some(|c, me, e| {
                     let Some(n) = hero_hit(me, e) else { return };
                     let total = c.counter_perm(me.side, me.eid, n);
-                    let fired = total / 4;
+                    let fired = total / 5;
                     if fired > 0 {
-                        c.counter_perm(me.side, me.eid, -4 * fired);
+                        c.counter_perm(me.side, me.eid, -5 * fired);
                         give_n(c, me.side, "BG28_607", (fired * me.g()) as usize);
                     }
                 }),
                 listens: ev::HERO_DAMAGED,
-                // "After your hero takes 4 damage, get a copy of Corrupted Cupcakes.
-                // (4 left!)"
-                shown: Some(|_, sh| vec![4, (4 - sh.counter()).max(0)]),
+                // "After your hero takes 5 damage, get a copy of Corrupted Cupcakes.
+                // (5 left!)"
+                shown: Some(|_, sh| vec![5, (5 - sh.counter()).max(0)]),
                 ..E
             },
         ),

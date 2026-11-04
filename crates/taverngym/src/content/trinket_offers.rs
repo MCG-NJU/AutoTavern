@@ -152,6 +152,7 @@ pub fn offer_rule(g: &Game, p: PlayerId, id: &str) -> bool {
     let hero = |h: &str| pl.hero_is(h);
     let deathrattle = || pl.board.iter().any(|m| minion_has(m, Hook::Deathrattle));
     match id {
+        "BG36_MagicItem_307" => !g.lobby_races.intersects(Races::QUILBOAR),
         // Hero exclusions.
         "BG30_MagicItem_888" | "BG30_MagicItem_891" | "BG32_MagicItem_271" => {
             !hero("BG30_HERO_304") && !hero("BG32_HERO_002") // Marin, Buttons

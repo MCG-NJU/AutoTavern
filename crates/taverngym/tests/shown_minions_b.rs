@@ -251,8 +251,9 @@ fn gold_counters_show_the_gold_left() {
     set_board(&mut g, 0, &[COURIER, "BG36_523_G", ROGERS]);
     // The Courier counts 5; its printed "(6 Gold left!)" is the old 6.
     assert_eq!(
-        board_text(&mut g, 0).as_deref(),
-        Some("Whenever you spend 5 Gold, give your Pirates +3/+1. (5 Gold left!)")
+        board_text(&mut g, 0),
+        None,
+        "countdown matches the printed text"
     );
     for i in 1..3 {
         assert_eq!(board_text(&mut g, i), None, "as printed");
@@ -265,16 +266,15 @@ fn gold_counters_show_the_gold_left() {
     assert_eq!(
         board_text(&mut g, 1).as_deref(),
         Some(
-            "After you spend 6 Gold, get a Lockbox. If you already have one, it opens 2 turns \
-             sooner instead. (2 Gold left!)"
+            "After you spend 5 Gold, get a Lockbox. If you already have one, it opens 2 turns \
+             sooner instead. (1 Gold left!)"
         )
     );
     assert_eq!(
         board_text(&mut g, 2).as_deref(),
         Some("After you spend 9 Gold, get a random Bounty. (5 Gold left!)")
     );
-    // 7 Gold spent: the 6-Gold Escapee fired and starts again from 1, the 5-Gold Courier
-    // from 2.
+    // 7 Gold spent: both five-Gold thresholds have fired once, with remainder 2.
     spend(&mut g, 3);
     assert_eq!(
         board_text(&mut g, 0).as_deref(),
@@ -283,22 +283,22 @@ fn gold_counters_show_the_gold_left() {
     assert_eq!(
         board_text(&mut g, 1).as_deref(),
         Some(
-            "After you spend 6 Gold, get a Lockbox. If you already have one, it opens 2 turns \
-             sooner instead. (5 Gold left!)"
+            "After you spend 5 Gold, get a Lockbox. If you already have one, it opens 2 turns \
+             sooner instead. (3 Gold left!)"
         )
     );
     assert_eq!(
         board_text(&mut g, 2).as_deref(),
         Some("After you spend 9 Gold, get a random Bounty. (2 Gold left!)")
     );
-    // The normal Escapee prints "1 turns sooner".
+    // The normal Escapee prints "1 turn sooner".
     set_board(&mut g, 0, &[ESCAPEE]);
     spend(&mut g, 2);
     assert_eq!(
         board_text(&mut g, 0).as_deref(),
         Some(
-            "After you spend 6 Gold, get a Lockbox. If you already have one, it opens 1 turns \
-             sooner instead. (4 Gold left!)"
+            "After you spend 5 Gold, get a Lockbox. If you already have one, it opens 1 turn \
+             sooner instead. (3 Gold left!)"
         )
     );
 }
@@ -367,14 +367,14 @@ fn hooktusk_shows_the_golden_minions_played() {
     assert_eq!(
         board_text(&mut g, 0).as_deref(),
         Some(
-            "After you Discover a card, give your other Pirates +3/+3. (Improved by Golden \
+            "After you Discover a card, give your Pirates +3/+3. (Improved by Golden \
              minions you played this game!)"
         )
     );
     assert_eq!(
         board_text(&mut g, 1).as_deref(),
         Some(
-            "After you Discover a card, give your other Pirates +6/+6. (Improved by Golden \
+            "After you Discover a card, give your Pirates +6/+6. (Improved by Golden \
              minions you played this game!)"
         )
     );

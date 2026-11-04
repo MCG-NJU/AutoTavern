@@ -6,6 +6,10 @@ TavernGym exposes one eight-player game, a single-seat environment and a batched
 through Python bindings over a Rust engine. See the [quick start](../README.md#quick-start)
 for installation.
 
+The current engine targets client **37.0.2.256589** and server rules **37.0.2**. Its Python
+interfaces and observation dimensions are unchanged. See [version notes](PATCH_37.0.2.md)
+before comparing saved states or benchmark runs across game patches.
+
 ## One game
 
 ```python
